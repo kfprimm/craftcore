@@ -1,0 +1,7 @@
+
+#ifndef CRAFTCORE_KEYCODES_H
+#define CRAFTCORE_KEYCODES_H
+
+#define KEY_ESCAPE 9
+
+#endif
