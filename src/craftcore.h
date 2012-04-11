@@ -58,10 +58,14 @@ void ccFlip();
 
 // world.c
 
+#define CHUNKSIZE 16
+
 typedef struct ccChunk
 {
-	int block[16][16][16];
-	int state[16][16][16];
+	char block[CHUNKSIZE][CHUNKSIZE][CHUNKSIZE];
+	char flags[CHUNKSIZE][CHUNKSIZE][CHUNKSIZE];
+	unsigned short tri_count;
+	unsigned int pos_buffer, tri_buffer;
 } ccChunk;
 
 typedef struct ccWorld
@@ -71,7 +75,7 @@ typedef struct ccWorld
 
 // rendering.c
 
-void ccRenderInit();
+void ccRenderStartup();
 void ccRender(int width, int height);
 
 #endif

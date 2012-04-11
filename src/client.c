@@ -28,7 +28,7 @@ int main()
 	ccEventStartup();
 
 	ccOpenContext("CraftCore", 800, 600);
-	ccRenderInit();
+	ccRenderStartup();
 	
 	ccHookAdd(ccEventHook, (CCHOOKFUNC)HookFunc);
 	

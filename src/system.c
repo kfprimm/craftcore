@@ -53,13 +53,14 @@ int ccOpenContext(char *title, int width, int height)
 
   Atom delWindow = XInternAtom(dpy, "WM_DELETE_WINDOW", 0);
   XSetWMProtocols(dpy, win, &delWindow, 1);
-
-	/*XSizeHints* hints = XAllocSizeHints();
-	hints->flags = PSize | PMinSize | PMaxSize;
+  
+	XSizeHints* hints = XAllocSizeHints();
+	/*hints->flags = PSize | PMinSize | PMaxSize;
 	hints->min_width = (hints->max_width = (hints->base_width = width));
-	hints->min_height = (hints->max_height = (hints->base_height = height));
+	hints->min_height = (hints->max_height = (hints->base_height = height));*/
+	hints->win_gravity=CenterGravity;
 	XSetWMNormalHints(dpy, win, hints);
-	XFree(hints); */
+	XFree(hints); 
 
 	XMapWindow(dpy, win);
 	XStoreName(dpy, win, title);
