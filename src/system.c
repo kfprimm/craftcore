@@ -14,6 +14,7 @@ Window                  win;
 GLXContext              glc;
 XWindowAttributes       gwa;
 XEvent xev;
+Cursor csr;
 
 void ccPollSystem()
 {
@@ -21,11 +22,13 @@ void ccPollSystem()
 	{
 		XNextEvent(dpy, &xev);
 		XKeyEvent *ke = (XKeyEvent*)&xev;
+		XMotionEvent *me = (XMotionEvent*)&xev;
 		switch (xev.type)
 		{
 		case ClientMessage: ccEmitEvent(EVENT_CLOSEBUTTON, 0, 0, 0);break;
 		case KeyPress:			ccEmitEvent(EVENT_KEYDOWN, ke->keycode, ke->x, ke->y);break;
 		case KeyRelease:    ccEmitEvent(EVENT_KEYUP, ke->keycode, ke->x, ke->y);break;
+		case MotionNotify:  ccEmitEvent(EVENT_MOUSEMOVE, 0, me->x, me->y);break;
 		}
 	}
 }
@@ -94,4 +97,33 @@ void ccCloseContext()
 void ccFlip()
 {
 	glXSwapBuffers(dpy, win);
+}
+
+void ccMoveMouse(int x, int y)
+{
+	XWarpPointer(dpy,None,win,0,0,0,0,x,y);
+}
+
+void ccMouseVisible(int visible)
+{
+	if (!win) return;
+
+	if (visible)
+	{
+		XUndefineCursor(dpy,win);		
+	}
+	else
+	{
+		if (!csr)
+		{
+			XColor black;
+			char bm[]={0,0,0,0,0,0,0,0};
+			Pixmap pix=XCreateBitmapFromData(dpy,win,bm,8,8);
+			memset(&black,0,sizeof(XColor));
+			black.flags=DoRed|DoGreen|DoBlue;
+			csr=XCreatePixmapCursor(dpy,pix,pix,&black,&black,0,0);
+			XFreePixmap(dpy,pix);
+		}
+		XDefineCursor(dpy,win,csr);
+	}
 }

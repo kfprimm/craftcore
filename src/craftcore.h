@@ -7,15 +7,29 @@
 
 #include <keycodes.h>
 
-#define PI 3.14159265
-#define D2R(v) ((v)*(PI/180.0f))
-#define R2D(v) ((v)*(180.0f/PI))
-
 #define FALSE 0
 #define TRUE  1
 #define ccNew(class) ((class*)malloc(sizeof(class)))
 
-// hook.c
+// Math
+
+#define PI 3.14159265
+#define D2R(v) ((v)*(PI/180.0f))
+#define R2D(v) ((v)*(180.0f/PI))
+
+float *ccMatrixIdentity(float *matrix);
+float *ccMatrixCopy(float *dst, float *src);
+float *ccMatrixMultiply(float *out, float *a, float *b);
+float *ccMatrixTranslation(float *matrix, float x, float y, float z);
+float *ccMatrixTranslate(float *matrix, float x, float y, float z);
+float *ccMatrixInvert(float *out, float *in);
+float *ccMatrixInverse(float *matrix);
+float *ccMatrixScaling(float *matrix, float x, float y, float z);
+float *ccMatrixScale(float *matrix, float x, float y, float z);
+float *ccMatrixRotate(float *matrix, float yaw, float pitch, float roll);
+void   ccMatrixPosition(float *matrix, float *x, float *y, float *z);
+
+// Hook
 
 typedef void (*CCHOOKFUNC)(void *data);
 
@@ -29,7 +43,7 @@ ccHook *ccNewHook();
 void ccHookAdd(ccHook *hook, CCHOOKFUNC func);
 void ccHookRun(ccHook *hook, void *data);
 
-// event.c
+// Event
 
 #define EVENT_CLOSEBUTTON 1
 #define EVENT_KEYUP       2
@@ -47,7 +61,7 @@ extern ccHook *ccEventHook;
 void ccEmitEvent(int id, int data, int x, int y);
 void ccEventStartup();
 
-// system.c
+// System
 
 void ccPollSystem();
 int ccOpenContext(char *title, int width, int height);
@@ -55,8 +69,31 @@ int ccContextWidth();
 int ccContextHeight();
 void ccCloseContext();
 void ccFlip();
+void ccMoveMouse(int x, int y);
+void ccMouseVisible(int visible);
 
-// world.c
+// Entity
+
+typedef struct ccEntity
+{
+	int class;
+	float px, py, pz;
+	float rx, ry, rz;
+	float sx, sy, sz;
+	float matrix[16];
+} ccEntity;
+
+void ccEntityInit(ccEntity *ent);
+void ccEntityMove(ccEntity *ent, float x, float y, float z);
+void ccEntityTurn(ccEntity *ent, float pitch, float yaw, float roll);
+
+typedef struct ccPlayer
+{
+	ccEntity ent;
+	float world_matrix[16];
+} ccPlayer;
+
+// World
 
 #define CHUNKSIZE 16
 
@@ -73,7 +110,7 @@ typedef struct ccWorld
 
 } ccWorld;
 
-// rendering.c
+// Rendering
 
 void ccRenderStartup();
 void ccRender(int width, int height);

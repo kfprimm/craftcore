@@ -116,13 +116,13 @@ void ccChunkBuild(ccChunk *chunk)
 				// Right
 				if (ccChunkCheck(chunk, x + 1, y, z) < 1)
 				{
-					ccChunkIndices[index*3 + 0] = CHUNKVERTEXINDEX(x, y + 1, z + 1);
-					ccChunkIndices[index*3 + 1] = CHUNKVERTEXINDEX(x, y + 1, z);
-					ccChunkIndices[index*3 + 2] = CHUNKVERTEXINDEX(x, y, z);
+					ccChunkIndices[index*3 + 0] = CHUNKVERTEXINDEX(x + 1, y + 1, z + 1);
+					ccChunkIndices[index*3 + 1] = CHUNKVERTEXINDEX(x + 1, y + 1, z);
+					ccChunkIndices[index*3 + 2] = CHUNKVERTEXINDEX(x + 1, y, z);
 				
-					ccChunkIndices[index*3 + 3] = CHUNKVERTEXINDEX(x, y, z + 1);
-					ccChunkIndices[index*3 + 4] = CHUNKVERTEXINDEX(x, y + 1, z + 1);
-					ccChunkIndices[index*3 + 5] = CHUNKVERTEXINDEX(x, y, z);
+					ccChunkIndices[index*3 + 3] = CHUNKVERTEXINDEX(x + 1, y, z + 1);
+					ccChunkIndices[index*3 + 4] = CHUNKVERTEXINDEX(x + 1, y + 1, z + 1);
+					ccChunkIndices[index*3 + 5] = CHUNKVERTEXINDEX(x + 1, y, z);
 					index += 2;
 				}
 		}	
@@ -137,10 +137,12 @@ void ccChunkRender(ccChunk *chunk)
 {
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB,ccChunkPositionBuffer);
 	glVertexPointer(3,GL_FLOAT,0,0);
-	
+
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,chunk->tri_buffer);
-	glDrawElements(GL_TRIANGLES,chunk->tri_count,GL_UNSIGNED_SHORT,0);
+	glDrawElements(GL_TRIANGLES,chunk->tri_count*3,GL_UNSIGNED_SHORT,0);	
 }
+
+ccEntity camera;
 
 void ccRenderStartup()
 {
@@ -182,12 +184,16 @@ void ccRenderStartup()
 	
 	TestChunk = ccNewChunk();
 	ccChunkBuild(TestChunk);
+	
+	ccEntityInit(&camera);
 }
 
 float rotation = 0.0f;
 
 void ccRender(int width, int height)
 {
+	float matrix[16];
+	
 	glViewport(0,0,width,height);
 	glScissor(0,0,width,height);
 	glClearColor(0.0f, 0.5f, 0.75f, 1.0f);
@@ -197,14 +203,24 @@ void ccRender(int width, int height)
 	glLoadIdentity();
 
 	float ratio=(float)width/(float)height;
-	gluPerspective(R2D(atan((1.0f/(1.0f*ratio)))*2.0f), ratio, 1, 1000);
+	gluPerspective(R2D(atan((1.0f/(1.0f*ratio)))*2.0f), ratio, 1, 10000);
+	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(-(CHUNKSIZE*2/2.0),0.0f,-(CHUNKSIZE*2/2.0)-CHUNKSIZE-5);
-	glRotatef(rotation*4,1.0f,1.0f,0.0f);
-	ccChunkRender(TestChunk);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	rotation += 0.2f;
+	ccMatrixCopy(matrix, camera.matrix);
+	ccMatrixInverse(matrix);
+	glLoadMatrixf(matrix);
+	
+	glPushMatrix();
+	ccMatrixIdentity(matrix);
+	ccMatrixTranslate(matrix, -(CHUNKSIZE*2/2.0),0.0f,-(CHUNKSIZE*2/2.0)-CHUNKSIZE-5);
+	ccMatrixRotate(matrix, rotation*4, rotation*4, 0);
+	glMultMatrixf(matrix);
+	
+	ccChunkRender(TestChunk);
+	glPopMatrix();
+	
+	//rotation += 0.2f;
 }
