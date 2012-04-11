@@ -30,7 +30,7 @@ ccChunk *ccNewChunk()
 
 char ccChunkCheck(ccChunk *chunk, int x, int y, int z)
 {
-	if (x < 0 || x > CHUNKSIZE || y < 0 || y > CHUNKSIZE || z < 0 || z > CHUNKSIZE)
+	if (x < 0 || x > CHUNKSIZE - 1  || y < 0 || y > CHUNKSIZE - 1 || z < 0 || z > CHUNKSIZE - 1)
 		return -1;
 	return chunk->block[x][y][z];
 }
@@ -130,7 +130,7 @@ void ccChunkBuild(ccChunk *chunk)
 	printf("Count = %i\n", index);
 
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,chunk->tri_buffer);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,chunk->tri_count,ccChunkIndices,GL_STATIC_DRAW_ARB);
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,sizeof(ccChunkIndices),ccChunkIndices,GL_STATIC_DRAW_ARB);
 }
 
 void ccChunkRender(ccChunk *chunk)
@@ -178,7 +178,7 @@ void ccRenderStartup()
 	
 	glGenBuffersARB(1, &ccChunkPositionBuffer);
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB,ccChunkPositionBuffer);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB,CHUNKDATASIZE,ccChunkPositionData,GL_STATIC_DRAW_ARB);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB,sizeof(ccChunkPositionData),ccChunkPositionData,GL_STATIC_DRAW_ARB);
 	
 	TestChunk = ccNewChunk();
 	ccChunkBuild(TestChunk);
@@ -206,5 +206,5 @@ void ccRender(int width, int height)
 	ccChunkRender(TestChunk);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	rotation += 0.02f;
+	rotation += 0.2f;
 }
