@@ -88,6 +88,7 @@ typedef struct ccEntity
 
 void ccEntityInit(ccEntity *ent);
 void ccEntityMove(ccEntity *ent, float x, float y, float z);
+void ccEntityPosition(ccEntity *ent, float x, float y, float z);
 void ccEntityTurn(ccEntity *ent, float pitch, float yaw, float roll);
 void ccEntityRotation(ccEntity *ent, float *pitch, float *yaw, float *roll);
 void ccEntityRotate(ccEntity *ent, float pitch, float yaw, float roll);
@@ -98,6 +99,19 @@ typedef struct ccPlayer
 	float world_matrix[16];
 } ccPlayer;
 
+// Blocks
+
+typedef struct ccTextureUV
+{
+	float left, top, right, bottom;
+} ccTextureUV;
+																
+typedef struct ccBlock
+{
+	char *name;
+	ccTextureUV *uv[6];
+} ccBlock;
+
 // Chunk
 
 #define CHUNKSIZE 16
@@ -107,12 +121,19 @@ typedef struct ccPlayer
 #define CHUNKDATASIZE    (sizeof(float)*CHUNKVERTEXCOUNT*3)
 #define CHUNKVERTEXINDEX(x, y, z) ((z) * (CHUNKSIZE + 1) * (CHUNKSIZE + 1) + (y) * (CHUNKSIZE + 1) + (x))
 
+#define CHUNK_BACK    0
+#define CHUNK_FRONT   1
+#define CHUNK_BOTTOM  2
+#define CHUNK_TOP     3
+#define CHUNK_LEFT    4
+#define CHUNK_RIGHT   5
+
 typedef struct ccChunk
 {
 	char block[CHUNKSIZE][CHUNKSIZE][CHUNKSIZE];
 	char flags[CHUNKSIZE][CHUNKSIZE][CHUNKSIZE];
-	unsigned short tri_count;
-	unsigned int pos_buffer, tex_buffer, tri_buffer;
+	unsigned short tri_count[6];
+	unsigned int pos_buffer[6], tex_buffer[6], clr_buffer[6], tri_buffer[6];
 } ccChunk;
 
 ccChunk *ccNewChunk();

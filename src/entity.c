@@ -30,6 +30,14 @@ void ccEntityMove(ccEntity *ent, float x, float y, float z)
 	ccEntityRefreshMatrix(ent);
 }
 
+void ccEntityPosition(ccEntity *ent, float x, float y, float z)
+{
+	ent->px = x;
+	ent->py = y;
+	ent->pz = z;
+	ccEntityRefreshMatrix(ent);	
+}
+
 void ccEntityRotation(ccEntity *ent, float *pitch, float *yaw, float *roll)
 {
 	*pitch = ent->rx;

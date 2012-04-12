@@ -30,16 +30,8 @@ void HookFunc(ccEvent *ev)
 		case KEY_A:ccKeyA = 0;break;
 		case KEY_S:ccKeyS = 0;break;
 		case KEY_D:ccKeyD = 0;break;
-		case KEY_SPACE:
-			ccLookAround = !ccLookAround;
-			/*if (ccLookAround)
-				ccMouseVisible(FALSE);
-			else
-				ccMouseVisible(TRUE);*/
-				
-			break;
 		}
-		printf("KEY UP: %i\n", ev->data);
+		//printf("KEY UP: %i\n", ev->data);
 		break;
 	case EVENT_KEYDOWN:
 		switch (ev->data)
@@ -49,6 +41,24 @@ void HookFunc(ccEvent *ev)
 		case KEY_S:ccKeyS = 1;break;
 		case KEY_D:ccKeyD = 1;break;
 		}
+		break;
+	case EVENT_MOUSEDOWN:
+		if (ev->data == 2)
+		{
+			ccMouseX = ev->x;
+			ccMouseY = ev->y;
+			ccMoveMouse(ccContextWidth()/2, ccContextHeight()/2);			
+			ccLookAround = 1;
+			ccMouseVisible(!ccLookAround);
+		}
+		break;
+	case EVENT_MOUSEUP:
+		if (ev->data == 2)
+		{
+			ccLookAround = 0;
+			ccMouseVisible(!ccLookAround);		
+		}
+		break;
 	case EVENT_MOUSEMOVE:
 		ccLastMouseX = ccMouseX;
 		ccLastMouseY = ccMouseY;
@@ -64,6 +74,8 @@ int main()
 
 	ccOpenContext("CraftCore", 800, 600);
 	ccRenderStartup();
+	
+	ccEntityPosition(&camera, 0,6,CHUNKSIZE*4);
 	
 	ccHookAdd(ccEventHook, (CCHOOKFUNC)HookFunc);
 	

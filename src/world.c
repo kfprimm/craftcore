@@ -21,11 +21,11 @@ void ccRenderStartup()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_SCISSOR_TEST);
 	
-	glEnable(GL_NORMALIZE);
+	//glEnable(GL_NORMALIZE);
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	//glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
 	//glEnableClientState(GL_NORMAL_ARRAY);
 	
 	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
@@ -44,8 +44,6 @@ void ccRenderStartup()
 	
 	ccEntityInit(&camera);
 }
-
-float rotation = 0.0f;
 
 void ccRender(int width, int height)
 {
@@ -72,12 +70,9 @@ void ccRender(int width, int height)
 	
 	glPushMatrix();
 	ccMatrixIdentity(matrix);
-	ccMatrixTranslate(matrix, -(CHUNKSIZE*2/2.0),0.0f,-(CHUNKSIZE*2/2.0)-CHUNKSIZE-5);
-	ccMatrixRotate(matrix, rotation*4, rotation*4, 0);
+	ccMatrixTranslate(matrix, -CHUNKSIZE,0.0f,CHUNKSIZE);
 	glMultMatrixf(matrix);
 	
 	ccChunkRender(TestChunk);
 	glPopMatrix();
-	
-	//rotation += 0.2f;
 }

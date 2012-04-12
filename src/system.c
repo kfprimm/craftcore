@@ -23,12 +23,30 @@ void ccPollSystem()
 		XNextEvent(dpy, &xev);
 		XKeyEvent *ke = (XKeyEvent*)&xev;
 		XMotionEvent *me = (XMotionEvent*)&xev;
+		XButtonEvent *be = (XButtonEvent*)&xev;
+		int data = 0;
 		switch (xev.type)
 		{
 		case ClientMessage: ccEmitEvent(EVENT_CLOSEBUTTON, 0, 0, 0);break;
 		case KeyPress:			ccEmitEvent(EVENT_KEYDOWN, ke->keycode, ke->x, ke->y);break;
 		case KeyRelease:    ccEmitEvent(EVENT_KEYUP, ke->keycode, ke->x, ke->y);break;
 		case MotionNotify:  ccEmitEvent(EVENT_MOUSEMOVE, 0, me->x, me->y);break;
+		case ButtonPress:
+			switch (be->button)
+			{
+			case Button1: data = 1;break;
+			case Button3: data = 2;break;
+			}
+			ccEmitEvent(EVENT_MOUSEDOWN, data, be->x, be->y);
+			break;
+		case ButtonRelease:
+			switch (be->button)
+			{
+			case Button1: data = 1;break;
+			case Button3: data = 2;break;
+			}
+			ccEmitEvent(EVENT_MOUSEUP, data, be->x, be->y);
+			break;
 		}
 	}
 }
