@@ -30,6 +30,21 @@ void ccEntityMove(ccEntity *ent, float x, float y, float z)
 	ccEntityRefreshMatrix(ent);
 }
 
+void ccEntityRotation(ccEntity *ent, float *pitch, float *yaw, float *roll)
+{
+	*pitch = ent->rx;
+	*yaw   = ent->ry;
+	*roll  = ent->rz;
+}
+
+void ccEntityRotate(ccEntity *ent, float pitch, float yaw, float roll)
+{
+	ent->rx = pitch;
+	ent->ry = yaw;
+	ent->rz = roll;
+	ccEntityRefreshMatrix(ent);
+}
+
 void ccEntityTurn(ccEntity *ent, float pitch, float yaw, float roll)
 {
 	ent->rx += pitch;

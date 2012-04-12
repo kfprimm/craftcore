@@ -25,10 +25,10 @@ float *ccMatrixCopy(float *dst, float *src)
 float *ccMatrixPitch(float *m, float angle)
 {
 	ccMatrixIdentity(m);
-	m[_(1,1)]=cos(D2R(angle));
-	m[_(2,1)]=sin(D2R(angle));
-	m[_(1,2)]=-sin(D2R(angle));
-	m[_(2,2)]=cos(D2R(angle));
+	m[_(1,1)] = cos(D2R(angle));
+	m[_(2,1)] = sin(D2R(angle));
+	m[_(1,2)] = -sin(D2R(angle));
+	m[_(2,2)] = cos(D2R(angle));
 	return m;
 }
 
@@ -143,11 +143,10 @@ float *ccMatrixScale(float *matrix, float x, float y, float z)
 
 float *ccMatrixRotate(float *matrix, float yaw, float pitch, float roll)
 {
-
-	ccMatrixRoll(ccMatrixA, roll);
+	ccMatrixYaw(ccMatrixA, yaw);
 	ccMatrixPitch(ccMatrixB, pitch);
 	ccMatrixMultiply(ccMatrixC, ccMatrixB, ccMatrixA);
-	ccMatrixYaw(ccMatrixA, yaw);
+	ccMatrixRoll(ccMatrixA, roll);
 	ccMatrixMultiply(ccMatrixB, ccMatrixA, ccMatrixC);
 
 	ccMatrixCopy(ccMatrixA, matrix);

@@ -1,0 +1,15 @@
+
+-- Craftcore Standard Mod
+-- By Kevin Primm
+return {
+	name    = "CraftCore Standard",
+	author  = "Kevin Primm",
+	version = "0.0.1pre0",
+	website = "http://craftcore.org/",
+	
+	textures = { "dirt.png" },
+	
+	blocks = {
+		"dirt"
+	}
+}

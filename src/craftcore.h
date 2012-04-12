@@ -7,6 +7,9 @@
 
 #include <keycodes.h>
 
+#define min(v0, v1) ((v0) > (v1) ? (v1) : (v0))
+#define max(v0, v1) ((v0) > (v1) ? (v0) : (v1))
+
 #define FALSE 0
 #define TRUE  1
 #define ccNew(class) ((class*)malloc(sizeof(class)))
@@ -86,6 +89,8 @@ typedef struct ccEntity
 void ccEntityInit(ccEntity *ent);
 void ccEntityMove(ccEntity *ent, float x, float y, float z);
 void ccEntityTurn(ccEntity *ent, float pitch, float yaw, float roll);
+void ccEntityRotation(ccEntity *ent, float *pitch, float *yaw, float *roll);
+void ccEntityRotate(ccEntity *ent, float pitch, float yaw, float roll);
 
 typedef struct ccPlayer
 {
@@ -93,17 +98,30 @@ typedef struct ccPlayer
 	float world_matrix[16];
 } ccPlayer;
 
-// World
+// Chunk
 
 #define CHUNKSIZE 16
+
+#define CHUNKCUBECOUNT   (CHUNKSIZE*CHUNKSIZE*CHUNKSIZE)
+#define CHUNKVERTEXCOUNT ((CHUNKSIZE + 1)*(CHUNKSIZE + 1)*(CHUNKSIZE + 1))
+#define CHUNKDATASIZE    (sizeof(float)*CHUNKVERTEXCOUNT*3)
+#define CHUNKVERTEXINDEX(x, y, z) ((z) * (CHUNKSIZE + 1) * (CHUNKSIZE + 1) + (y) * (CHUNKSIZE + 1) + (x))
 
 typedef struct ccChunk
 {
 	char block[CHUNKSIZE][CHUNKSIZE][CHUNKSIZE];
 	char flags[CHUNKSIZE][CHUNKSIZE][CHUNKSIZE];
 	unsigned short tri_count;
-	unsigned int pos_buffer, tri_buffer;
+	unsigned int pos_buffer, tex_buffer, tri_buffer;
 } ccChunk;
+
+ccChunk *ccNewChunk();
+char ccChunkCheck(ccChunk *chunk, int x, int y, int z);
+void ccChunkBuild(ccChunk *chunk);
+void ccChunkRender(ccChunk *chunk);
+void ccChunksStartup();
+
+// World
 
 typedef struct ccWorld
 {

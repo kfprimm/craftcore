@@ -32,10 +32,10 @@ void HookFunc(ccEvent *ev)
 		case KEY_D:ccKeyD = 0;break;
 		case KEY_SPACE:
 			ccLookAround = !ccLookAround;
-			if (ccLookAround)
+			/*if (ccLookAround)
 				ccMouseVisible(FALSE);
 			else
-				ccMouseVisible(TRUE);
+				ccMouseVisible(TRUE);*/
 				
 			break;
 		}
@@ -73,14 +73,19 @@ int main()
 		
 		if (ccLookAround)
 		{
-			ccMoveMouse(ccContextWidth()/2, ccContextHeight()/2);
-			//ccEntityTurn(&camera, (ccLastMouseY - ccMouseY)*.5, (ccLastMouseX - ccMouseX)*.5, 0);
-			//ccEntityTurn(&camera, 1,1,1);
-			ccEntityTurn(&camera, ccKeyS-ccKeyW, 0, 0);
-			ccEntityTurn(&camera, 0, ccKeyD-ccKeyA, 0);
+			int center_x = ccContextWidth()/2, center_y = ccContextHeight()/2;
+			float pitch, yaw, roll;
+			ccEntityRotation(&camera, &pitch, &yaw, &roll);
+			pitch -= (center_y - ccMouseY)*0.5;
+			yaw   += (center_x - ccMouseX)*0.5;
+			
+			pitch = min(max(pitch, -85), 85);
+			
+			ccEntityRotate(&camera, pitch, yaw, roll);
+			ccMoveMouse(center_x, center_y);			
 		}
 		
-		//ccEntityMove(&camera, ccKeyD-ccKeyA, 0, ccKeyS-ccKeyW);
+		ccEntityMove(&camera, ccKeyD-ccKeyA, 0, ccKeyS-ccKeyW);
 		ccRender(ccContextWidth(), ccContextHeight());
 		ccFlip();
 	}
