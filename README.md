@@ -1,11 +1,18 @@
-### Craftcore
-Craftcore is Minecraft-type game engine that aims to be highly customizable and developer friendly.
+### Introduction
+Craftcore is a Minecraft inspired game engine that aims to be highly customizable and developer friendly.
 
 ### Installation/Usage
 Craftcore depends on the following libraries:
 
 * GLew   >= 1.5
+* DevIL  >= 1.7.8
 * LuaJIT =  2.0.0 (beta9)
+
+On Ubuntu:
+
+```
+sudo apt-get install git libdevil-dev libglew1.5-dev
+```
 
 To install LuaJIT 2.0.0:
 
