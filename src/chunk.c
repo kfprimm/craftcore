@@ -8,9 +8,9 @@
 
 #include <noise.h>
 
-ccTextureUV  ccTextureUVs[3] =	{ {0.0, 0.0, 0.5, 0.5},
-																	{0.5, 0.0, 1.0, 0.5},
-																	{0.0, 0.5, 0.5, 1.0},
+ccTextureUV  ccTextureUVs[3] =	{ {32.0/256.0, 0.0, 48.0/256.0, 16.0/256.0},
+																	{0.0, 0.0, 16.0/256.0, 16.0/256.0},
+																	{48.0/256.0, 0.0, 64.0/256.0, 16.0/256.0},
 																};
 
 ccBlock ccBlocks[2] =	{ { "Dirt", { &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0] } },
@@ -91,35 +91,35 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 		set(2, x, y + 1, z);
 		break;
 	case CHUNK_FRONT:
-		shade = 0.5;
+		shade = 0.8;
 		set(0, x, y, z + 1);
 		set(1, x + 1, y, z + 1);
 		set(2, x + 1, y + 1, z + 1);
 		set(3, x, y + 1, z + 1);
 		break;
 	case CHUNK_BOTTOM:
-		shade = 0.5;
+		shade = 1.0;
 		set(0, x, y, z);
 		set(1, x + 1, y, z);
 		set(2, x + 1, y, z + 1);
 		set(3, x, y, z + 1);
 		break;
 	case CHUNK_TOP:
-		shade = 0.5;
+		shade = 1.0;
 		set(0, x + 1, y + 1, z + 1);
 		set(1, x + 1, y + 1, z);
 		set(2, x, y + 1, z);
 		set(3, x, y + 1, z + 1);
 		break;
 	case CHUNK_LEFT:
-		shade = 0.5;
+		shade = 0.7;
 		set(2, x, y + 1, z + 1);
 		set(3, x, y + 1, z);
 		set(0, x, y, z);
 		set(1, x, y, z + 1);
 		break;
 	case CHUNK_RIGHT:
-		shade = 0.5;
+		shade = 0.6;
 		set(1, x + 1, y, z);
 		set(2, x + 1, y + 1, z);
 		set(3, x + 1, y + 1, z + 1);
@@ -127,24 +127,33 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 		break;
 	}
 	
-	clr[cnt*16 +  0] = shade;
-	clr[cnt*16 +  1] = shade;
-	clr[cnt*16 +  2] = shade;
+	float r = 1.0, g = 1.0, b = 1.0;
+	
+	if (block == 2 && dir == CHUNK_TOP)
+	{
+		r = 107.0/255.0;
+		g = 197.0/255.0;
+		b = 70.0/255.0;
+	}
+	
+	clr[cnt*16 +  0] = r * shade;
+	clr[cnt*16 +  1] = g * shade;
+	clr[cnt*16 +  2] = b * shade;
 	clr[cnt*16 +  3] = 1.0;
 	
-	clr[cnt*16 +  4] = shade;
-	clr[cnt*16 +  5] = shade;
-	clr[cnt*16 +  6] = shade;
+	clr[cnt*16 +  4] = r * shade;
+	clr[cnt*16 +  5] = g * shade;
+	clr[cnt*16 +  6] = b * shade;
 	clr[cnt*16 +  7] = 1.0;
 
-	clr[cnt*16 +  8] = shade;
-	clr[cnt*16 +  9] = shade;
-	clr[cnt*16 + 10] = shade;
+	clr[cnt*16 +  8] = r * shade;
+	clr[cnt*16 +  9] = g * shade;
+	clr[cnt*16 + 10] = b * shade;
 	clr[cnt*16 + 11] = 1.0;
 	
-	clr[cnt*16 + 12] = shade;
-	clr[cnt*16 + 13] = shade;
-	clr[cnt*16 + 14] = shade;
+	clr[cnt*16 + 12] = r * shade;
+	clr[cnt*16 + 13] = g * shade;
+	clr[cnt*16 + 14] = b * shade;
 	clr[cnt*16 + 15] = 1.0;
 	
 	ccTextureUV *uv = ccBlocks[block - 1].uv[dir];	
@@ -219,6 +228,7 @@ void ccChunkBuild(ccChunk *chunk)
 	glGenBuffersARB(6, chunk->tri_buffer);
 	glGenBuffersARB(6, chunk->pos_buffer);
 	glGenBuffersARB(6, chunk->tex_buffer);
+	glGenBuffersARB(6, chunk->clr_buffer);	
 		
 	for (int i = 0;i < 6;i++)
 	{
@@ -271,7 +281,7 @@ void ccChunksStartup()
 	ilGenImages(1, &image);
 	ilBindImage(image);
 	
-	char success = ilLoadImage((const ILstring)"mods/standard/textures.png");
+	char success = ilLoadImage((const ILstring)"mods/standard/textures/terrain.png");
 	if (success)
 	{
 		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);

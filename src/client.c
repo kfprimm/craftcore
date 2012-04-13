@@ -97,7 +97,7 @@ int main()
 			ccMoveMouse(center_x, center_y);			
 		}
 		
-		ccEntityMove(&camera, ccKeyD-ccKeyA, 0, ccKeyS-ccKeyW);
+		ccEntityMove(&camera, (ccKeyD-ccKeyA) * .1, 0, (ccKeyS-ccKeyW) * .1);
 		ccRender(ccContextWidth(), ccContextHeight());
 		ccFlip();
 	}
