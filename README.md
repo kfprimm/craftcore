@@ -22,6 +22,7 @@ $ wget http://luajit.org/download/LuaJIT-2.0.0-beta9.tar.gz
 $ tar zxf LuaJIT-2.0.0-beta9.tar.gz && cd LuaJIT-2.0.0-beta9
 $ make
 $ sudo make install
+$ sudo ln -sf luajit-2.0.0-beta9 /usr/local/bin/luajit
 ```
 
 To install enet:
