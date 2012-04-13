@@ -12,10 +12,8 @@ ccChunk *TestChunk = NULL;
 
 ccEntity camera;
 
-void ccRenderStartup()
+void ccRender3D()
 {
-	glewInit();
-	
 	//glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -28,15 +26,17 @@ void ccRenderStartup()
 	glEnableClientState(GL_COLOR_ARRAY);
 	//glEnableClientState(GL_NORMAL_ARRAY);
 	
-	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
-
 	glClearDepth(1.0);
 	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	glAlphaFunc(GL_GEQUAL,0.5f);
-	
+}
+
+void ccRenderStartup()
+{
+	glewInit();
+	ccRender3D();
 	ccChunksStartup();
 	
 	TestChunk = ccNewChunk();
@@ -48,6 +48,8 @@ void ccRenderStartup()
 void ccRender(int width, int height)
 {
 	float matrix[16];
+	
+	ccRender3D();
 	
 	glViewport(0,0,width,height);
 	glScissor(0,0,width,height);

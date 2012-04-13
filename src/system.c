@@ -2,6 +2,7 @@
 #include <craftcore.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#include <GL/glew.h>
 #include <GL/glx.h>
 
 Display                 *dpy;
@@ -15,6 +16,9 @@ GLXContext              glc;
 XWindowAttributes       gwa;
 XEvent xev;
 Cursor csr;
+
+typedef int (*GLXSWAPINTERVALSGI)(int);
+GLXSWAPINTERVALSGI glXSwapIntervalSGI;
 
 void ccPollSystem()
 {
@@ -85,10 +89,14 @@ int ccOpenContext(char *title, int width, int height)
 
 	XMapWindow(dpy, win);
 	XStoreName(dpy, win, title);
-
+	
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
-	
+
+	glXSwapIntervalSGI=(GLXSWAPINTERVALSGI)glXGetProcAddressARB("glXSwapIntervalSGI");
+
+	glXSwapIntervalSGI(1);
+		
 	return 0;
 }
 

@@ -74,6 +74,7 @@ int main()
 
 	ccOpenContext("CraftCore", 800, 600);
 	ccRenderStartup();
+	ccUIStartup();
 	
 	ccEntityPosition(&camera, 0,6,CHUNKSIZE*4);
 	
@@ -97,8 +98,9 @@ int main()
 			ccMoveMouse(center_x, center_y);			
 		}
 		
-		ccEntityMove(&camera, (ccKeyD-ccKeyA) * .1, 0, (ccKeyS-ccKeyW) * .1);
+		ccEntityMove(&camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));
 		ccRender(ccContextWidth(), ccContextHeight());
+		ccRenderUI();
 		ccFlip();
 	}
 	ccCloseContext();

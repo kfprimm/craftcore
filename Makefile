@@ -10,7 +10,7 @@ LIBS    = -g -lX11 -lIL -lGLEW -lGL -lGLU $(LUA_LIBS) $(ENET_LIBS)
 
 IMPORT_DIR = mods/standard/import
 
-OBJECTS = src/client.o src/world.o src/entity.o src/chunk.o src/event.o src/hook.o src/system.o src/math.o src/noise.o
+OBJECTS = src/client.o src/ui.c src/world.o src/entity.o src/chunk.o src/event.o src/hook.o src/system.o src/math.o src/noise.o
 HEADERS = src/craftcore.h src/keycodes.h src/noise.h
 
 craftcore: $(OBJECTS)

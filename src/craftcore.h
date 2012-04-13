@@ -149,6 +149,10 @@ typedef struct ccWorld
 
 } ccWorld;
 
+// UI
+
+void ccRenderUI();
+
 // Rendering
 
 void ccRenderStartup();
