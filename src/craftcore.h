@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
 #include <keycodes.h>
 
 #define min(v0, v1) ((v0) > (v1) ? (v1) : (v0))
@@ -51,9 +55,10 @@ void ccHookRun(ccHook *hook, void *data);
 #define EVENT_CLOSEBUTTON 1
 #define EVENT_KEYUP       2
 #define EVENT_KEYDOWN     3
-#define EVENT_MOUSEMOVE   4
-#define EVENT_MOUSEUP     5
-#define EVENT_MOUSEDOWN   6
+#define EVENT_KEYCHAR     4
+#define EVENT_MOUSEMOVE   5
+#define EVENT_MOUSEUP     6
+#define EVENT_MOUSEDOWN   7
 
 typedef struct ccEvent
 {
@@ -101,15 +106,16 @@ typedef struct ccPlayer
 
 // Blocks
 
-typedef struct ccTextureUV
+typedef struct ccSide
 {
 	float left, top, right, bottom;
-} ccTextureUV;
+	float r, g, b;
+} ccSide;
 																
 typedef struct ccBlock
 {
 	char *name;
-	ccTextureUV *uv[6];
+	ccSide *side[6];
 } ccBlock;
 
 // Chunk
@@ -146,16 +152,47 @@ void ccChunksStartup();
 
 typedef struct ccWorld
 {
-
+	
 } ccWorld;
 
 // UI
 
+typedef struct ccAtlas
+{
+	int width, height, bpp, format;
+	unsigned char *data;
+	unsigned int texture;
+} ccAtlas;
+
+typedef struct ccImage
+{
+	ccAtlas *atlas;
+	float left, top, right, bottom;
+	int width, height;
+} ccImage;
+
+ccAtlas *ccLoadAtlas(const char *path);
+void ccAtlasUpload(ccAtlas *atlas);
+ccImage *ccAtlasImage(ccAtlas *atlas, int left, int top, int right, int bottom);
+
+void ccDrawImage(ccImage *image, float x, float y);
+void ccDrawRect(float x, float y, float width, float height);
+
+void ccUIStartup();
 void ccRenderUI();
+
+// Networking
+
+void ccNetworkStartup();
 
 // Rendering
 
 void ccRenderStartup();
 void ccRender(int width, int height);
+
+// Lua
+
+extern lua_State *L;
+void ccLuaStartup();
 
 #endif

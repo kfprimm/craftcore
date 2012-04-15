@@ -22,6 +22,10 @@ GLXSWAPINTERVALSGI glXSwapIntervalSGI;
 
 void ccPollSystem()
 {
+	char cstr[128];
+	int len = 0;
+	KeySym sym;
+	
 	while (XPending(dpy) > 0)
 	{
 		XNextEvent(dpy, &xev);
@@ -32,7 +36,13 @@ void ccPollSystem()
 		switch (xev.type)
 		{
 		case ClientMessage: ccEmitEvent(EVENT_CLOSEBUTTON, 0, 0, 0);break;
-		case KeyPress:			ccEmitEvent(EVENT_KEYDOWN, ke->keycode, ke->x, ke->y);break;
+		case KeyPress:
+			len = XLookupString(ke, cstr, 128, &sym, 0);
+			for (int i = 0; i < len;i++){
+				ccEmitEvent(EVENT_KEYCHAR,cstr[i],0,0);
+			}
+			ccEmitEvent(EVENT_KEYDOWN, ke->keycode, ke->x, ke->y);
+			break;
 		case KeyRelease:    ccEmitEvent(EVENT_KEYUP, ke->keycode, ke->x, ke->y);break;
 		case MotionNotify:  ccEmitEvent(EVENT_MOUSEMOVE, 0, me->x, me->y);break;
 		case ButtonPress:
@@ -93,7 +103,7 @@ int ccOpenContext(char *title, int width, int height)
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
 
-	glXSwapIntervalSGI=(GLXSWAPINTERVALSGI)glXGetProcAddressARB("glXSwapIntervalSGI");
+	glXSwapIntervalSGI=(GLXSWAPINTERVALSGI)glXGetProcAddressARB((GLubyte*)"glXSwapIntervalSGI");
 
 	glXSwapIntervalSGI(1);
 		

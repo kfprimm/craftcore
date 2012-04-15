@@ -1,15 +1,25 @@
 
--- Craftcore Standard Mod
--- By Kevin Primm
-return {
-	name    = "CraftCore Standard",
-	author  = "Kevin Primm",
-	version = "0.0.1pre0",
-	website = "http://craftcore.org/",
-	
-	textures = { "dirt.png" },
-	
-	blocks = {
-		"dirt", "grass"
-	}
-}
+name    "CraftCore Standard"
+author  "Kevin Primm"
+version "0.0.1pre0"
+website "http://craftcore.org/"
+
+texture { "import/terrain.png", 
+					{ "dirt",       32,  0, 48, 16 },
+					{ "grass",       0,  0, 16, 16 },
+					{ "grass_side", 48,  0, 64, 16 },
+				}
+				
+texture { "import/gui/gui.png", 
+					{ "gui.item-bar", 0,  0, 182, 22 },
+					{ "gui.exp-bar", 0,  64, 182, 68 },
+				}		
+				
+texture { "import/gui/icons.png", 
+					{ "icons.cursor", 0,  0, 15, 15 },
+				}								
+
+block   { "dirt", "grass" }
+
+hud     { size = { 640, 480 } }
+

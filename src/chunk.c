@@ -8,13 +8,13 @@
 
 #include <noise.h>
 
-ccTextureUV  ccTextureUVs[3] =	{ {32.0/256.0, 0.0, 48.0/256.0, 16.0/256.0},
-																	{0.0, 0.0, 16.0/256.0, 16.0/256.0},
-																	{48.0/256.0, 0.0, 64.0/256.0, 16.0/256.0},
-																};
+ccSide  ccSides[3] =	{ {32.0/256.0, 0.0, 48.0/256.0, 16.0/256.0, 1.0, 1.0, 1.0},
+												{0.0, 0.0, 16.0/256.0, 16.0/256.0, 107.0/255.0, 197.0/255.0, 70.0/255.0},
+												{48.0/256.0, 0.0, 64.0/256.0, 16.0/256.0, 1.0, 1.0, 1.0},
+											};
 
-ccBlock ccBlocks[2] =	{ { "Dirt", { &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0], &ccTextureUVs[0] } },
-												{ "Grass", { &ccTextureUVs[2], &ccTextureUVs[2], &ccTextureUVs[0], &ccTextureUVs[1], &ccTextureUVs[2], &ccTextureUVs[2] } }
+ccBlock ccBlocks[2] =	{ { "Dirt", { &ccSides[0], &ccSides[0], &ccSides[0], &ccSides[0], &ccSides[0], &ccSides[0] } },
+												{ "Grass", { &ccSides[2], &ccSides[2], &ccSides[0], &ccSides[1], &ccSides[2], &ccSides[2] } }
 											};
 
 float          ccChunkPosition[6][CHUNKCUBECOUNT*4*3];
@@ -127,61 +127,40 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 		break;
 	}
 	
-	float r = 1.0, g = 1.0, b = 1.0;
-	
-	if (block == 2 && dir == CHUNK_TOP)
-	{
-		r = 107.0/255.0;
-		g = 197.0/255.0;
-		b = 70.0/255.0;
-	}
-	
-	clr[cnt*16 +  0] = r * shade;
-	clr[cnt*16 +  1] = g * shade;
-	clr[cnt*16 +  2] = b * shade;
+	ccSide *side = ccBlocks[block - 1].side[dir];
+		
+	clr[cnt*16 +  0] = side->r * shade;
+	clr[cnt*16 +  1] = side->g * shade;
+	clr[cnt*16 +  2] = side->b * shade;
 	clr[cnt*16 +  3] = 1.0;
 	
-	clr[cnt*16 +  4] = r * shade;
-	clr[cnt*16 +  5] = g * shade;
-	clr[cnt*16 +  6] = b * shade;
+	clr[cnt*16 +  4] = side->r * shade;
+	clr[cnt*16 +  5] = side->g * shade;
+	clr[cnt*16 +  6] = side->b * shade;
 	clr[cnt*16 +  7] = 1.0;
 
-	clr[cnt*16 +  8] = r * shade;
-	clr[cnt*16 +  9] = g * shade;
-	clr[cnt*16 + 10] = b * shade;
+	clr[cnt*16 +  8] = side->r * shade;
+	clr[cnt*16 +  9] = side->g * shade;
+	clr[cnt*16 + 10] = side->b * shade;
 	clr[cnt*16 + 11] = 1.0;
 	
-	clr[cnt*16 + 12] = r * shade;
-	clr[cnt*16 + 13] = g * shade;
-	clr[cnt*16 + 14] = b * shade;
+	clr[cnt*16 + 12] = side->r * shade;
+	clr[cnt*16 + 13] = side->g * shade;
+	clr[cnt*16 + 14] = side->b * shade;
 	clr[cnt*16 + 15] = 1.0;
 	
-	ccTextureUV *uv = ccBlocks[block - 1].uv[dir];	
-		
-	tex[cnt*8 + 0] = uv->left;
-	tex[cnt*8 + 1] = uv->bottom;
+	tex[cnt*8 + 0] = side->left;
+	tex[cnt*8 + 1] = side->bottom;
 	
-	tex[cnt*8 + 2] = uv->right;
-	tex[cnt*8 + 3] = uv->bottom;
+	tex[cnt*8 + 2] = side->right;
+	tex[cnt*8 + 3] = side->bottom;
 	
-	tex[cnt*8 + 4] = uv->right;
-	tex[cnt*8 + 5] = uv->top;
+	tex[cnt*8 + 4] = side->right;
+	tex[cnt*8 + 5] = side->top;
 	
-	tex[cnt*8 + 6] = uv->left;
-	tex[cnt*8 + 7] = uv->top;
+	tex[cnt*8 + 6] = side->left;
+	tex[cnt*8 + 7] = side->top;
 	
-	/*tex[cnt*8 + 0] = 0.0;
-	tex[cnt*8 + 1] = 1.0;
-	
-	tex[cnt*8 + 2] = 1.0;
-	tex[cnt*8 + 3] = 1.0;
-	
-	tex[cnt*8 + 4] = 1.0;
-	tex[cnt*8 + 5] = 0.0;
-	
-	tex[cnt*8 + 6] = 0.0;
-	tex[cnt*8 + 7] = 0.0;*/
-
 	idx[cnt*6 + 0] = cnt*4 + 0;
 	idx[cnt*6 + 1] = cnt*4 + 1;
 	idx[cnt*6 + 2] = cnt*4 + 2;

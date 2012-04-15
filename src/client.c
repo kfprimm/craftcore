@@ -72,9 +72,11 @@ int main()
 {
 	ccEventStartup();
 
-	ccOpenContext("CraftCore", 800, 600);
+	ccOpenContext("CraftCore", 640, 480);
 	ccRenderStartup();
 	ccUIStartup();
+
+	ccLuaStartup();
 	
 	ccEntityPosition(&camera, 0,6,CHUNKSIZE*4);
 	

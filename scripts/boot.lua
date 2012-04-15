@@ -2,12 +2,16 @@
 -- Craftcore
 -- Mod boot script
 
-info = dofile("mods/"..arg[1].."/Craftfile")
+MOD_DIR = "mods/"..arg[1]
+package.path = package.path..";"..MOD_DIR.."/?.lua;"..MOD_DIR.."/?"
 
-blocks, count = {}, 0
-for i, b in ipairs(info.blocks) do
-	blocks[b] = dofile("mods/"..arg[1].."/blocks/"..b..".lua")
-	cc.addBlock()
-	count = count + 1
-end
+require("scripts/craftfile")
+
+cm = craftfile()
+require("ui")
+
+--for i, b in ipairs(cm.blocks) do
+	--require("mods/"..arg[1].."/blocks/"..b)
+	--cc.addBlock()
+--end
 

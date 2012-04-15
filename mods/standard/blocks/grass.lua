@@ -1,8 +1,8 @@
 
--- Grass block
-return {
-	name    = "Grass",
-	texture = "grass.png",
-	sides   = {
-	 "grass_side.png", "dirt.png"}
-}
+name    "Grass"
+texture "grass_side"
+
+top.texture "grass",
+top.color   { 107, 197, 70 }
+
+bottom.texture "dirt"

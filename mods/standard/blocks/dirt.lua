@@ -1,6 +1,5 @@
 
--- Basic dirt block
-return {
-	name = "Dirt",
-	texture = "dirt.png"
-}
+name    "Dirt"
+texture "dirt"
+
+
