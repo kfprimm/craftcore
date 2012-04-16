@@ -1,25 +1,41 @@
 
-name    "CraftCore Standard"
-author  "Kevin Primm"
-version "0.0.1pre0"
-website "http://craftcore.org/"
+meta:
+  name:    CraftCore Standard
+  author:  Kevin Primm
+  version: 0.0.1pre0
+  website: http\://craftcore.org/
 
-texture { "import/terrain.png", 
-					{ "dirt",       32,  0, 48, 16 },
-					{ "grass",       0,  0, 16, 16 },
-					{ "grass_side", 48,  0, 64, 16 },
-				}
-				
-texture { "import/gui/gui.png", 
-					{ "gui.item-bar", 0,  0, 182, 22 },
-					{ "gui.exp-bar", 0,  64, 182, 68 },
-				}		
-				
-texture { "import/gui/icons.png", 
-					{ "icons.cursor", 0,  0, 15, 15 },
-				}								
+textures:
+  - url: import/terrain.png
+  	sub:
+  	- name: dirt
+		  rect: [32, 0, 48, 16]
+		  
+	 	- name: grass
+			rect: [0, 0, 16, 16]
+	  
+    - name: grass_side
+    	rect: [48, 0, 64, 16]
 
-block   { "dirt", "grass" }
+	- url: import/gui/gui.png
+		prefix: gui
+		sub:
+			- name: item-bar
+				rect: [0,  0, 182, 22]
+		
+			- name: exp-bar
+				rect: [0,  64, 182, 68]
+        
+	- url: import/gui/icons.png
+		prefix: icons
+		sub:
+			- name: cursor
+				rect: [0,  0, 15, 15]
 
-hud     { size = { 640, 480 } }
+blocks:
+	- dirt
+	- grass
+
+hud:
+	size: [640, 480]
 

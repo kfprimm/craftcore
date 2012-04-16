@@ -80,6 +80,30 @@ void ccFlip();
 void ccMoveMouse(int x, int y);
 void ccMouseVisible(int visible);
 
+// 2D
+
+
+typedef struct ccAtlas
+{
+	int width, height, bpp, format;
+	unsigned char *data;
+	unsigned int texture;
+} ccAtlas;
+
+typedef struct ccImage
+{
+	ccAtlas *atlas;
+	float left, top, right, bottom;
+	int width, height;
+} ccImage;
+
+ccAtlas *ccLoadAtlas(const char *path);
+void ccAtlasUpload(ccAtlas *atlas);
+ccImage *ccAtlasImage(ccAtlas *atlas, int left, int top, int right, int bottom);
+
+void ccDrawImage(ccImage *image, float x, float y);
+void ccDrawRect(float x, float y, float width, float height);
+
 // Entity
 
 typedef struct ccEntity
@@ -108,7 +132,7 @@ typedef struct ccPlayer
 
 typedef struct ccSide
 {
-	float left, top, right, bottom;
+	ccImage *image;
 	float r, g, b;
 } ccSide;
 																
@@ -156,27 +180,6 @@ typedef struct ccWorld
 } ccWorld;
 
 // UI
-
-typedef struct ccAtlas
-{
-	int width, height, bpp, format;
-	unsigned char *data;
-	unsigned int texture;
-} ccAtlas;
-
-typedef struct ccImage
-{
-	ccAtlas *atlas;
-	float left, top, right, bottom;
-	int width, height;
-} ccImage;
-
-ccAtlas *ccLoadAtlas(const char *path);
-void ccAtlasUpload(ccAtlas *atlas);
-ccImage *ccAtlasImage(ccAtlas *atlas, int left, int top, int right, int bottom);
-
-void ccDrawImage(ccImage *image, float x, float y);
-void ccDrawRect(float x, float y, float width, float height);
 
 void ccUIStartup();
 void ccRenderUI();
