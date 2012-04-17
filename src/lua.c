@@ -2,12 +2,13 @@
 #include <craftcore.h>
 
 LUALIB_API int luaopen_yaml(lua_State *L);
+LUALIB_API int luaopen_noise(lua_State *L);
 
 lua_State *L;
 
-static int lua_ccLoadAtlas(lua_State *L)
+static int l_load_atlas(lua_State *L)
 {
-	ccAtlas *atlas = ccLoadAtlas(lua_tostring(L, 1));
+	cc_atlas_t *atlas = cc_load_atlas(lua_tostring(L, 1));
 	if (atlas)
 		lua_pushlightuserdata(L, atlas);
 	else
@@ -15,9 +16,9 @@ static int lua_ccLoadAtlas(lua_State *L)
 	return 1;
 }
 
-static int lua_ccAtlasTexture(lua_State *L)
+static int l_atlas_texture(lua_State *L)
 {
-	ccTexture *texture = ccAtlasTexture(lua_touserdata(L, 1), lua_tointeger(L, 2), lua_tointeger(L, 3), lua_tointeger(L, 4), lua_tointeger(L, 5));
+	cc_texture_t *texture = cc_atlas_texture(lua_touserdata(L, 1), lua_tointeger(L, 2), lua_tointeger(L, 3), lua_tointeger(L, 4), lua_tointeger(L, 5));
 	if (texture)
 		lua_pushlightuserdata(L, texture);
 	else
@@ -25,29 +26,27 @@ static int lua_ccAtlasTexture(lua_State *L)
 	return 1;
 }
 
-static int lua_ccDrawTexture(lua_State *L)
+static int l_texture_draw(lua_State *L)
 {
-	ccDrawTexture(lua_touserdata(L, 1), lua_tonumber(L, 2), lua_tonumber(L, 3));
+	cc_texture_draw(lua_touserdata(L, 1), lua_tonumber(L, 2), lua_tonumber(L, 3));
 	return 0;
 }
 
-static int lua_ccContextWidth(lua_State *L)
+static int l_context_size(lua_State *L)
 {
-	lua_pushnumber(L, ccContextWidth());
-	return 1;
+	int width, height;
+	cc_context_size(&width, &height);
+	lua_pushnumber(L, width);
+	lua_pushnumber(L, height);
+	return 2;
 }
 
-static int lua_ccContextHeight(lua_State *L)
-{
-	lua_pushnumber(L, ccContextHeight());
-	return 1;
-}
-
-void ccLuaStartup()
+void cc_startup_lua()
 {
 	L = lua_open();
 	luaL_openlibs(L);
 	luaopen_yaml(L);
+	luaopen_noise(L);
 	
 	lua_newtable(L);
 	lua_pushnumber(L, 1);
@@ -56,16 +55,14 @@ void ccLuaStartup()
 	lua_setglobal(L, "arg");
 	
 	lua_newtable(L);
-	lua_pushcfunction(L, lua_ccLoadAtlas);
+	lua_pushcfunction(L, l_load_atlas);
 	lua_setfield(L, -2, "loadAtlas");
-	lua_pushcfunction(L, lua_ccAtlasTexture);
+	lua_pushcfunction(L, l_atlas_texture);
 	lua_setfield(L, -2, "atlasTexture");
-	lua_pushcfunction(L, lua_ccDrawTexture);
+	lua_pushcfunction(L, l_texture_draw);
 	lua_setfield(L, -2, "drawTexture");
-	lua_pushcfunction(L, lua_ccContextWidth);
-	lua_setfield(L, -2, "contextWidth");
-	lua_pushcfunction(L, lua_ccContextHeight);
-	lua_setfield(L, -2, "contextHeight");
+	lua_pushcfunction(L, l_context_size);
+	lua_setfield(L, -2, "contextSize");
 	lua_setglobal(L, "cc");
 
 	if (luaL_loadfile(L, "scripts/boot.lua") == 0)

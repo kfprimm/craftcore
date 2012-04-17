@@ -1,19 +1,19 @@
 
 #include <craftcore.h>
 
-ccHook *ccEventHook;
+cc_hook_t *cc_event_hook;
 
-void ccEmitEvent(int id, int data, int x, int y)
+void cc_emit_event(int id, int data, int x, int y)
 {
-	ccEvent event;
+	cc_event_t event;
 	event.id   = id;
 	event.data = data;
 	event.x    = x;
 	event.y    = y;
-	ccHookRun(ccEventHook, &event);
+	cc_hook_run(cc_event_hook, &event);
 }
 
-void ccEventStartup()
+void cc_startup_event()
 {
-	ccEventHook = ccNewHook();
+	cc_event_hook = cc_new_hook();
 }

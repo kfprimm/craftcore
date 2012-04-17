@@ -1,26 +1,26 @@
 
 #include <craftcore.h>
 
-ccHook *ccNewHook()
+cc_hook_t *cc_new_hook()
 {
-	ccHook *hook = ccNew(ccHook);
+	cc_hook_t *hook = cc_new(hook);
 	hook->func = NULL;
 	hook->next = NULL;
 	return hook;
 }
 
-void ccHookAdd(ccHook *hook, CCHOOKFUNC func)
+void cc_hook_add(cc_hook_t *hook, CCHOOKFUNC func)
 {
-	ccHook *end = hook;
+	cc_hook_t *end = hook;
 	while (end->next != NULL)
 		end = end->next;
-	end->next = ccNewHook();
+	end->next = cc_new_hook();
 	end->next->func = func;
 }
 
-void ccHookRun(ccHook *hook, void *data)
+void cc_hook_run(cc_hook_t *hook, void *data)
 {
-	ccHook *run = hook->next;
+	cc_hook_t *run = hook->next;
 	while (run != NULL)
 	{
 		(run->func)(data);

@@ -6,65 +6,27 @@
 #include <IL/il.h> 
 #include <math.h>
 
-#include <noise.h>
-
-ccBlock **ccBlocks = NULL;
-
 float          ccChunkPosition[6][CHUNKCUBECOUNT*4*3];
 float          ccChunkTextureData[6][CHUNKCUBECOUNT*4*2];
 float          ccChunkColorData[6][CHUNKCUBECOUNT*4*4];
 unsigned short ccChunkIndices[6][CHUNKCUBECOUNT*2*3];
 unsigned short ccChunkFaceCount[6];
 
-ccChunk *ccNewChunk()
+cc_chunk_t *cc_new_chunk()
 {
-	ccChunk *chunk = ccNew(ccChunk);
-
-	int octaves = 2;
-	float freq  = 4;
-	int   seed  = 80185;
-	
-	srand(seed);
-	
-	for (int z = 0;z < CHUNKSIZE;z++)
-		for (int x = 0;x < CHUNKSIZE;x++)
-		{
-			float amp    = 1;
-			float vec[2] = {((float)x/CHUNKSIZE) * freq, ((float)z/CHUNKSIZE) * freq};
-			
-			float result = 0.0;
-			for (int i = 0; i < octaves; i++)
-			{
-				result += noise2(vec)*amp;
-				vec[0] *= 2.0f;
-				vec[1] *= 2.0f;
-		    amp *= 0.5f;
-			}
-
-			result = (result * 2) + 3;
-			for (int y = 0;y < CHUNKSIZE;y++)
-			{
-				if (y + 1 < result)
-					chunk->block[x][y][z] = 1;
-				else if (y < result)
-					chunk->block[x][y][z] = 2;
-				else
-					chunk->block[x][y][z] = 0;
-			}
-
-		}
-	
+	cc_chunk_t *chunk = cc_new(chunk);
+	memset(chunk, 0, sizeof(cc_chunk_t));
 	return chunk;
 }
 
-char ccChunkCheck(ccChunk *chunk, int x, int y, int z)
+char ccChunkCheck(cc_chunk_t *chunk, int x, int y, int z)
 {
 	if (x < 0 || x > CHUNKSIZE - 1  || y < 0 || y > CHUNKSIZE - 1 || z < 0 || z > CHUNKSIZE - 1)
 		return -1;
 	return chunk->block[x][y][z];
 }
 
-void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
+void ccChunkDataAddFace(cc_block_t *block, int dir, float x, float y, float z)
 {
 	unsigned short cnt = ccChunkFaceCount[dir];
 	float *pos = ccChunkPosition[dir], *tex = ccChunkTextureData[dir], *clr = ccChunkColorData[dir];
@@ -120,39 +82,37 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 		break;
 	}
 	
-	ccSide *side = ccBlocks[block - 1]->side[dir];
-		
-	clr[cnt*16 +  0] = side->r * shade;
-	clr[cnt*16 +  1] = side->g * shade;
-	clr[cnt*16 +  2] = side->b * shade;
+	clr[cnt*16 +  0] = block->color[dir][0] * shade;
+	clr[cnt*16 +  1] = block->color[dir][1] * shade;
+	clr[cnt*16 +  2] = block->color[dir][2] * shade;
 	clr[cnt*16 +  3] = 1.0;
 	
-	clr[cnt*16 +  4] = side->r * shade;
-	clr[cnt*16 +  5] = side->g * shade;
-	clr[cnt*16 +  6] = side->b * shade;
+	clr[cnt*16 +  4] = block->color[dir][0] * shade;
+	clr[cnt*16 +  5] = block->color[dir][1] * shade;
+	clr[cnt*16 +  6] = block->color[dir][2] * shade;
 	clr[cnt*16 +  7] = 1.0;
 
-	clr[cnt*16 +  8] = side->r * shade;
-	clr[cnt*16 +  9] = side->g * shade;
-	clr[cnt*16 + 10] = side->b * shade;
+	clr[cnt*16 +  8] = block->color[dir][0] * shade;
+	clr[cnt*16 +  9] = block->color[dir][1] * shade;
+	clr[cnt*16 + 10] = block->color[dir][2] * shade;
 	clr[cnt*16 + 11] = 1.0;
 	
-	clr[cnt*16 + 12] = side->r * shade;
-	clr[cnt*16 + 13] = side->g * shade;
-	clr[cnt*16 + 14] = side->b * shade;
+	clr[cnt*16 + 12] = block->color[dir][0] * shade;
+	clr[cnt*16 + 13] = block->color[dir][1] * shade;
+	clr[cnt*16 + 14] = block->color[dir][2] * shade;
 	clr[cnt*16 + 15] = 1.0;
 	
-	tex[cnt*8 + 0] = side->texture->left;
-	tex[cnt*8 + 1] = side->texture->bottom;
+	tex[cnt*8 + 0] = block->texture[dir]->left;
+	tex[cnt*8 + 1] = block->texture[dir]->bottom;
 	
-	tex[cnt*8 + 2] = side->texture->right;
-	tex[cnt*8 + 3] = side->texture->bottom;
+	tex[cnt*8 + 2] = block->texture[dir]->right;
+	tex[cnt*8 + 3] = block->texture[dir]->bottom;
 	
-	tex[cnt*8 + 4] = side->texture->right;
-	tex[cnt*8 + 5] = side->texture->top;
+	tex[cnt*8 + 4] = block->texture[dir]->right;
+	tex[cnt*8 + 5] = block->texture[dir]->top;
 	
-	tex[cnt*8 + 6] = side->texture->left;
-	tex[cnt*8 + 7] = side->texture->top;
+	tex[cnt*8 + 6] = block->texture[dir]->left;
+	tex[cnt*8 + 7] = block->texture[dir]->top;
 	
 	idx[cnt*6 + 0] = cnt*4 + 0;
 	idx[cnt*6 + 1] = cnt*4 + 1;
@@ -165,7 +125,7 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 	ccChunkFaceCount[dir] += 1;
 }
 
-void ccChunkBuild(ccChunk *chunk)
+void ccWorldChunkBuild(cc_world_t *world, cc_chunk_t *chunk)
 {
 	for (int i = 0;i < 6;i++)
 		ccChunkFaceCount[i] = 0;
@@ -174,9 +134,10 @@ void ccChunkBuild(ccChunk *chunk)
 		for (int y = 0;y < CHUNKSIZE;y++)
 			for (int x = 0;x < CHUNKSIZE;x++)
 			{
-				char block = chunk->block[x][y][z];
 				if (chunk->block[x][y][z] == 0)
 					continue;
+					
+				cc_block_t *block = world->blocks[chunk->block[x][y][z] - 1];
 
 				if (ccChunkCheck(chunk, x, y, z - 1) < 1)
 					ccChunkDataAddFace(block, CHUNK_BACK, x, y, z);
@@ -220,14 +181,8 @@ void ccChunkBuild(ccChunk *chunk)
 	}
 }
 
-unsigned int image, texture;
-
-void ccChunkRender(ccChunk *chunk)
+void cc_chunk_render(cc_chunk_t *chunk)
 {
-	glClientActiveTextureARB(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
 	for (int i = 0;i < 6;i++)
 	{
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB,chunk->tex_buffer[i]);
@@ -242,10 +197,5 @@ void ccChunkRender(ccChunk *chunk)
 		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,chunk->tri_buffer[i]);
 		glDrawElements(GL_TRIANGLES,chunk->tri_count[i]*2*3,GL_UNSIGNED_SHORT,0);	
 	}
-}
-
-void ccChunksStartup()
-{
-
 }
 

@@ -3,8 +3,8 @@ atlas:
   name: gui
   url: assets/gui/gui.png
   sub:
-    name: item-bar
-    rect: [0,  0, 182, 22]
-  sub:  
-    name: exp-bar
-    rect: [0,  64, 182, 68]
+    - name: item-bar
+      rect: [0,  0, 182, 22]
+      
+    - name: exp-bar
+      rect: [0,  64, 182, 68]

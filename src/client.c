@@ -11,10 +11,11 @@ int ccKeyW = 0, ccKeyS = 0, ccKeyA = 0, ccKeyD = 0;
 
 int ccLookAround = 0;
 
-extern ccEntity camera;
+extern cc_entity_t camera;
 
-void HookFunc(ccEvent *ev)
+void HookFunc(cc_event_t *ev)
 {
+	int width, height;
 	switch (ev->id)
 	{
 	case EVENT_CLOSEBUTTON:
@@ -47,16 +48,17 @@ void HookFunc(ccEvent *ev)
 		{
 			ccMouseX = ev->x;
 			ccMouseY = ev->y;
-			ccMoveMouse(ccContextWidth()/2, ccContextHeight()/2);			
+			cc_context_size(&width, &height);
+			cc_mouse_move(width/2, height/2);			
 			ccLookAround = 1;
-			ccMouseVisible(!ccLookAround);
+			cc_mouse_visible(!ccLookAround);
 		}
 		break;
 	case EVENT_MOUSEUP:
 		if (ev->data == 2)
 		{
 			ccLookAround = 0;
-			ccMouseVisible(!ccLookAround);		
+			cc_mouse_visible(!ccLookAround);		
 		}
 		break;
 	case EVENT_MOUSEMOVE:
@@ -68,44 +70,51 @@ void HookFunc(ccEvent *ev)
 	}
 }
 
+cc_world_t world;
+
 int main()
 {
-	ccEventStartup();
-	ccUIStartup();
-	ccLuaStartup();
-			
-	ccOpenContext("CraftCore", 640, 480);
-	ccRenderStartup();
-
-
+	cc_startup_event();
+	cc_startup_ui();
+	cc_world_init(&world);
 	
-	ccEntityPosition(&camera, 0,6,CHUNKSIZE*4);
+	cc_startup_lua();
+
+	//luaL_dofile(L, "mods/standard/scripts/worldgen.lua");
+
+	cc_context_open("CraftCore", 640, 480);
+	cc_startup_render();
+
+	cc_entity_set_position(world.camera, 0,6,CHUNKSIZE*4);
 	
-	ccHookAdd(ccEventHook, (CCHOOKFUNC)HookFunc);
+	cc_hook_add(cc_event_hook, (CCHOOKFUNC)HookFunc);
 	
 	while (ccContinue)
 	{
-		ccPollSystem();
+		cc_system_poll();
+		int width, height;
+		cc_context_size(&width, &height);		
 		
 		if (ccLookAround)
 		{
-			int center_x = ccContextWidth()/2, center_y = ccContextHeight()/2;
 			float pitch, yaw, roll;
-			ccEntityRotation(&camera, &pitch, &yaw, &roll);
+			int center_x = width/2, center_y = height/2;
+						
+			cc_entity_get_rotation(world.camera, &pitch, &yaw, &roll);
 			pitch -= (center_y - ccMouseY)*0.5;
 			yaw   += (center_x - ccMouseX)*0.5;
 			
 			pitch = min(max(pitch, -85), 85);
 			
-			ccEntityRotate(&camera, pitch, yaw, roll);
-			ccMoveMouse(center_x, center_y);			
+			cc_entity_set_rotation(world.camera, pitch, yaw, roll);
+			cc_mouse_move(center_x, center_y);			
 		}
 		
-		ccEntityMove(&camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));
-		ccRender(ccContextWidth(), ccContextHeight());
-		ccRenderUI();
-		ccFlip();
+		cc_entity_move(world.camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));
+		cc_world_render(&world, width, height);
+		cc_ui_render();
+		cc_context_flip();
 	}
-	ccCloseContext();
+	cc_context_close();
 	return 0;
 }

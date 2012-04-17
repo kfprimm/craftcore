@@ -3,78 +3,55 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <IL/il.h> 
 #include <math.h>
 
-#include <noise.h>
-
-ccChunk *TestChunk = NULL;
-
-ccEntity camera;
-
-void ccRender3D()
+void cc_world_init(cc_world_t *world)
 {
-	//glEnable(GL_LIGHTING);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_SCISSOR_TEST);
+	cc_camera_t *camera = cc_new(camera);
+	cc_entity_init(&camera->ent);
 	
-	//glEnable(GL_NORMALIZE);
+	cc_camera_set_color(camera, 0.0f, 0.5f, 0.75f);
+	cc_camera_set_zoom(camera, 1.0);
+	cc_camera_set_range(camera, 1.0, 1000.0);
 	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	//glEnableClientState(GL_NORMAL_ARRAY);
-	
-	glClearDepth(1.0);
-	glDepthFunc(GL_LEQUAL);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-	glAlphaFunc(GL_GEQUAL,0.5f);
+	world->camera = camera;
 }
 
-void ccRenderStartup()
-{
-	glewInit();
-	ccRender3D();
-	ccChunksStartup();
-	
-	//TestChunk = ccNewChunk();
-	//ccChunkBuild(TestChunk);
-	
-	ccEntityInit(&camera);
-}
-
-void ccRender(int width, int height)
+void cc_world_render(cc_world_t *world, int width, int height)
 {
 	float matrix[16];
 	
-	ccRender3D();
+	cc_render_3d();
+	
+	cc_camera_t *camera = world->camera;
 	
 	glViewport(0,0,width,height);
 	glScissor(0,0,width,height);
-	glClearColor(0.0f, 0.5f, 0.75f, 1.0f);
+	glClearColor(camera->r, camera->g, camera->b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
+		
 	float ratio=(float)width/(float)height;
-	gluPerspective(R2D(atan((1.0f/(1.0f*ratio)))*2.0f), ratio, 1, 10000);
+	gluPerspective(R2D(atan((1.0f/(world->camera->zoom*ratio)))*2.0f), ratio, world->camera->near, world->camera->far);
 	
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	glMatrixMode(GL_MODELVIEW);
 
-	ccMatrixCopy(matrix, camera.matrix);
-	ccMatrixInverse(matrix);
+	cc_matrix_copy(matrix, camera->ent.matrix);
+	cc_matrix_inverse(matrix);
 	glLoadMatrixf(matrix);
 	
 	glPushMatrix();
-	ccMatrixIdentity(matrix);
-	ccMatrixTranslate(matrix, -CHUNKSIZE,0.0f,CHUNKSIZE);
+	cc_identity_matrix(matrix);
+	cc_matrix_translate(matrix, -CHUNKSIZE,0.0f,CHUNKSIZE);
 	glMultMatrixf(matrix);
 	
-	ccChunkRender(TestChunk);
+	glClientActiveTextureARB(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, world->texture);
+	
 	glPopMatrix();
 }

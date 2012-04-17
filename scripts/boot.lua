@@ -15,6 +15,7 @@ function load_yaml(file, tag)
 end
 
 function import_atlas(file)
+	log("Loading textures from '"..file.."'")
 	local attr = load_yaml(file, 'atlas')
 	local atlas = cc.loadAtlas(MOD_DIR.."/"..attr['url'])
 	for i,sub in ipairs(attr['sub']) do
@@ -29,7 +30,7 @@ end
 
 function import_block(file)
 	local attr = load_yaml(file, 'block')
-	
+	log("Loaded '"..file.."'")
 end
 
 cm = { }
@@ -47,7 +48,7 @@ for k,v in pairs(attr) do
 		for i,d in ipairs(v) do
 			import_atlas(d)
 		end
-	elseif k == "atlases" then
+	elseif k == "blocks" then
 		for i,d in ipairs(v) do
 			import_block(d)
 		end		

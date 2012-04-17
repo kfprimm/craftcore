@@ -20,7 +20,7 @@ Cursor csr;
 typedef int (*GLXSWAPINTERVALSGI)(int);
 GLXSWAPINTERVALSGI glXSwapIntervalSGI;
 
-void ccPollSystem()
+void cc_system_poll()
 {
 	char cstr[128];
 	int len = 0;
@@ -35,23 +35,23 @@ void ccPollSystem()
 		int data = 0;
 		switch (xev.type)
 		{
-		case ClientMessage: ccEmitEvent(EVENT_CLOSEBUTTON, 0, 0, 0);break;
+		case ClientMessage: cc_emit_event(EVENT_CLOSEBUTTON, 0, 0, 0);break;
 		case KeyPress:
 			len = XLookupString(ke, cstr, 128, &sym, 0);
 			for (int i = 0; i < len;i++){
-				ccEmitEvent(EVENT_KEYCHAR,cstr[i],0,0);
+				cc_emit_event(EVENT_KEYCHAR,cstr[i],0,0);
 			}
-			ccEmitEvent(EVENT_KEYDOWN, ke->keycode, ke->x, ke->y);
+			cc_emit_event(EVENT_KEYDOWN, ke->keycode, ke->x, ke->y);
 			break;
-		case KeyRelease:    ccEmitEvent(EVENT_KEYUP, ke->keycode, ke->x, ke->y);break;
-		case MotionNotify:  ccEmitEvent(EVENT_MOUSEMOVE, 0, me->x, me->y);break;
+		case KeyRelease:    cc_emit_event(EVENT_KEYUP, ke->keycode, ke->x, ke->y);break;
+		case MotionNotify:  cc_emit_event(EVENT_MOUSEMOVE, 0, me->x, me->y);break;
 		case ButtonPress:
 			switch (be->button)
 			{
 			case Button1: data = 1;break;
 			case Button3: data = 2;break;
 			}
-			ccEmitEvent(EVENT_MOUSEDOWN, data, be->x, be->y);
+			cc_emit_event(EVENT_MOUSEDOWN, data, be->x, be->y);
 			break;
 		case ButtonRelease:
 			switch (be->button)
@@ -59,13 +59,13 @@ void ccPollSystem()
 			case Button1: data = 1;break;
 			case Button3: data = 2;break;
 			}
-			ccEmitEvent(EVENT_MOUSEUP, data, be->x, be->y);
+			cc_emit_event(EVENT_MOUSEUP, data, be->x, be->y);
 			break;
 		}
 	}
 }
 
-int ccOpenContext(char *title, int width, int height)
+int cc_context_open(char *title, int width, int height)
 {
 	dpy = XOpenDisplay(NULL);
 
@@ -110,19 +110,14 @@ int ccOpenContext(char *title, int width, int height)
 	return 0;
 }
 
-int ccContextWidth()
+void cc_context_size(int *width, int *height)
 {
 	XGetWindowAttributes(dpy, win, &gwa);
-	return gwa.width;
+	*width = gwa.width;
+	*height = gwa.height;
 }
 
-int ccContextHeight()
-{
-	XGetWindowAttributes(dpy, win, &gwa);
-	return gwa.height;
-}
-
-void ccCloseContext()
+void cc_context_close()
 {
 	glXMakeCurrent(dpy, None, NULL);
 	glXDestroyContext(dpy, glc);
@@ -130,17 +125,17 @@ void ccCloseContext()
 	XCloseDisplay(dpy);
 }
 
-void ccFlip()
+void cc_context_flip()
 {
 	glXSwapBuffers(dpy, win);
 }
 
-void ccMoveMouse(int x, int y)
+void cc_mouse_move(int x, int y)
 {
 	XWarpPointer(dpy,None,win,0,0,0,0,x,y);
 }
 
-void ccMouseVisible(int visible)
+void cc_mouse_visible(int visible)
 {
 	if (!win) return;
 

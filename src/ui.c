@@ -3,9 +3,9 @@
 #include <GL/gl.h>
 #include <IL/il.h>
 
-ccAtlas *ccLoadAtlas(const char *path)
+cc_atlas_t *cc_load_atlas(const char *path)
 {
-	ccAtlas *atlas = NULL;
+	cc_atlas_t *atlas = NULL;
 	
 	unsigned int image;
 	ilGenImages(1, &image);
@@ -14,7 +14,7 @@ ccAtlas *ccLoadAtlas(const char *path)
 	if (ilLoadImage((const ILstring)path))
 		if (ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
 		{
-			atlas = ccNew(ccAtlas);
+			atlas = cc_new(atlas);
 			atlas->width  = ilGetInteger(IL_IMAGE_WIDTH);
 			atlas->height = ilGetInteger(IL_IMAGE_HEIGHT);
 			atlas->bpp    = ilGetInteger(IL_IMAGE_BPP);
@@ -29,7 +29,7 @@ ccAtlas *ccLoadAtlas(const char *path)
 	return atlas;
 }
 
-void ccAtlasUpload(ccAtlas *atlas)
+void cc_atlas_upload(cc_atlas_t *atlas)
 {
 	glGenTextures(1, &atlas->texture);
 	glBindTexture(GL_TEXTURE_2D, atlas->texture);
@@ -38,9 +38,9 @@ void ccAtlasUpload(ccAtlas *atlas)
 	glTexImage2D(GL_TEXTURE_2D, 0, atlas->bpp, atlas->width, atlas->height, 0, atlas->format, GL_UNSIGNED_BYTE, atlas->data);
 }
 
-ccTexture *ccAtlasTexture(ccAtlas *atlas, int left, int top, int right, int bottom)
+cc_texture_t *cc_atlas_texture(cc_atlas_t *atlas, int left, int top, int right, int bottom)
 {
-	ccTexture *texture = ccNew(ccTexture);
+	cc_texture_t *texture = cc_new(texture);
 	texture->atlas  = atlas;
 	texture->left   = (float)left/atlas->width;
 	texture->top    = (float)top/atlas->height;
@@ -51,7 +51,7 @@ ccTexture *ccAtlasTexture(ccAtlas *atlas, int left, int top, int right, int bott
 	return texture;
 }
 
-void ccUIStartup()
+void cc_startup_ui()
 {
 	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
 		printf("BAD IL VERSION!\n");
@@ -59,7 +59,7 @@ void ccUIStartup()
 	ilInit();
 }
 
-void ccDrawRect(float x, float y, float width, float height)
+void cc_draw_rect(float x, float y, float width, float height)
 {
 	glBegin(GL_QUADS);
 	glTexCoord2f(0,0);
@@ -73,10 +73,10 @@ void ccDrawRect(float x, float y, float width, float height)
 	glEnd();
 }
 
-void ccDrawTexture(ccTexture *texture, float x, float y)
+void cc_texture_draw(cc_texture_t *texture, float x, float y)
 {
 	if (texture->atlas->texture == 0)
-		ccAtlasUpload(texture->atlas);
+		cc_atlas_upload(texture->atlas);
 		
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture->atlas->texture);
@@ -93,24 +93,16 @@ void ccDrawTexture(ccTexture *texture, float x, float y)
 	glEnd();	
 }
 
-void ccRenderUI()
+void cc_ui_render()
 {
-	glDisable(GL_DEPTH_TEST);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity();
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor3f(1,1,1);
 	
-	lua_getglobal(L, "cm");
+	/*lua_getglobal(L, "cm");
 	lua_getfield(L, -1, "renderHUD");
 	lua_call(L, 0, 0);
-	lua_pop(L, 1);
+	lua_pop(L, 1);*/
 	
 	glDisable(GL_BLEND);
 }

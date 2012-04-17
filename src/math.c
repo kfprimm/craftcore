@@ -6,7 +6,7 @@
 
 float ccMatrixA[16], ccMatrixB[16], ccMatrixC[16];
 
-float *ccMatrixIdentity(float *m)
+float *cc_identity_matrix(float *m)
 {
 	memset(m, 0, sizeof(float)*16);
 	m[_(0,0)] = 1.0f;
@@ -16,15 +16,15 @@ float *ccMatrixIdentity(float *m)
 	return m;
 }
 
-float *ccMatrixCopy(float *dst, float *src)
+float *cc_matrix_copy(float *dst, float *src)
 {
 	memcpy(dst, src, 16*4);
 	return dst;
 }
 
-float *ccMatrixPitch(float *m, float angle)
+float *cc_pitch_matrix(float *m, float angle)
 {
-	ccMatrixIdentity(m);
+	cc_identity_matrix(m);
 	m[_(1,1)] = cos(D2R(angle));
 	m[_(2,1)] = sin(D2R(angle));
 	m[_(1,2)] = -sin(D2R(angle));
@@ -32,9 +32,9 @@ float *ccMatrixPitch(float *m, float angle)
 	return m;
 }
 
-float *ccMatrixYaw(float *m, float angle)
+float *cc_yaw_matrix(float *m, float angle)
 {
-	ccMatrixIdentity(m);
+	cc_identity_matrix(m);
 	m[_(0,0)] = cos(D2R(angle));
 	m[_(2,0)] = sin(D2R(angle));
 	m[_(0,2)] = -sin(D2R(angle));
@@ -42,9 +42,9 @@ float *ccMatrixYaw(float *m, float angle)
 	return m;
 }
 
-float *ccMatrixRoll(float *m, float angle)
+float *cc_roll_matrix(float *m, float angle)
 {
-	ccMatrixIdentity(m);
+	cc_identity_matrix(m);
 	m[_(0,0)] = cos(D2R(angle));
 	m[_(0,1)] = -sin(D2R(angle));
 	m[_(1,0)] = sin(D2R(angle));
@@ -52,25 +52,25 @@ float *ccMatrixRoll(float *m, float angle)
 	return m;
 }
 
-float *ccMatrixScaling(float *m, float x, float y, float z)
+float *cc_scale_matrix(float *m, float x, float y, float z)
 {
-	ccMatrixIdentity(m);
+	cc_identity_matrix(m);
 	m[_(0,0)] = x;
 	m[_(1,1)] = y;
 	m[_(2,2)] = z;
 	return m;
 }
 
-float *ccMatrixTranslation(float *m, float x, float y, float z)
+float *cc_translation_matrix(float *m, float x, float y, float z)
 {
-	ccMatrixIdentity(m);
+	cc_identity_matrix(m);
 	m[_(3,0)] = x;
 	m[_(3,1)] = y;
 	m[_(3,2)] = z;
 	return m;
 }
 
-float *ccMatrixMultiply(float *out, float *a, float *b)
+float *cc_matrix_multiply(float *out, float *a, float *b)
 {
 	out[_(0,0)] = a[_(0,0)] * b[_(0,0)] + a[_(0,1)] * b[_(1,0)] + a[_(0,2)] * b[_(2,0)] + a[_(0,3)] * b[_(3,0)];
 	out[_(0,1)] = a[_(0,0)] * b[_(0,1)] + a[_(0,1)] * b[_(1,1)] + a[_(0,2)] * b[_(2,1)] + a[_(0,3)] * b[_(3,1)];
@@ -91,7 +91,7 @@ float *ccMatrixMultiply(float *out, float *a, float *b)
 	return out;
 }
 
-float ccMatrixDeterminant(float *m)
+float cc_matrix_determinant(float *m)
 {
 	return	m[_(0,0)]*m[_(1,1)]*m[_(2,2)]*m[_(3,3)] + m[_(0,0)]*m[_(1,2)]*m[_(2,3)]*m[_(3,1)] + m[_(0,0)]*m[_(1,3)]*m[_(2,1)]*m[_(3,2)] +
 					m[_(0,1)]*m[_(1,0)]*m[_(2,3)]*m[_(3,2)] + m[_(0,1)]*m[_(1,2)]*m[_(2,0)]*m[_(3,3)] + m[_(0,1)]*m[_(1,3)]*m[_(2,2)]*m[_(3,0)] +
@@ -103,9 +103,9 @@ float ccMatrixDeterminant(float *m)
 					m[_(0,3)]*m[_(1,0)]*m[_(2,1)]*m[_(3,2)] - m[_(0,3)]*m[_(1,1)]*m[_(2,2)]*m[_(3,0)] - m[_(0,3)]*m[_(1,2)]*m[_(2,0)]*m[_(3,1)];
 }
 
-float *ccMatrixInvert(float *out, float *in)
+float *cc_matrix_invert(float *out, float *in)
 {
-	float d = ccMatrixDeterminant(in);
+	float d = cc_matrix_determinant(in);
 	if (d == 0) return NULL;
 	d = 1.0f/d;
 	out[_(0,0)] = (in[_(1,1)]*in[_(2,2)]*in[_(3,3)] + in[_(1,2)]*in[_(2,3)]*in[_(3,1)] + in[_(1,3)]*in[_(2,1)]*in[_(3,2)] - in[_(1,1)]*in[_(2,3)]*in[_(3,2)] - in[_(1,2)]*in[_(2,1)]*in[_(3,3)] - in[_(1,3)]*in[_(2,2)]*in[_(3,1)])*d;
@@ -127,42 +127,42 @@ float *ccMatrixInvert(float *out, float *in)
 	return out;
 }
 
-void ccMatrixPosition(float *m, float *x, float *y, float *z)
+void cc_matrix_xyz(float *m, float *x, float *y, float *z)
 {
 	*x = m[_(3,0)];
 	*y = m[_(3,1)];
 	*z = m[_(3,2)];
 }
 
-float *ccMatrixScale(float *matrix, float x, float y, float z)
+float *cc_matrix_scale(float *matrix, float x, float y, float z)
 {
-	ccMatrixCopy(ccMatrixA, matrix);
-	ccMatrixScaling(ccMatrixB, x, y, z);
-	return ccMatrixMultiply(matrix, ccMatrixB, ccMatrixA);
+	cc_matrix_copy(ccMatrixA, matrix);
+	cc_scale_matrix(ccMatrixB, x, y, z);
+	return cc_matrix_multiply(matrix, ccMatrixB, ccMatrixA);
 }
 
-float *ccMatrixRotate(float *matrix, float yaw, float pitch, float roll)
+float *cc_matrix_rotate(float *matrix, float yaw, float pitch, float roll)
 {
-	ccMatrixYaw(ccMatrixA, yaw);
-	ccMatrixPitch(ccMatrixB, pitch);
-	ccMatrixMultiply(ccMatrixC, ccMatrixB, ccMatrixA);
-	ccMatrixRoll(ccMatrixA, roll);
-	ccMatrixMultiply(ccMatrixB, ccMatrixA, ccMatrixC);
+	cc_yaw_matrix(ccMatrixA, yaw);
+	cc_pitch_matrix(ccMatrixB, pitch);
+	cc_matrix_multiply(ccMatrixC, ccMatrixB, ccMatrixA);
+	cc_roll_matrix(ccMatrixA, roll);
+	cc_matrix_multiply(ccMatrixB, ccMatrixA, ccMatrixC);
 
-	ccMatrixCopy(ccMatrixA, matrix);
-	return ccMatrixMultiply(matrix, ccMatrixB, ccMatrixA);
+	cc_matrix_copy(ccMatrixA, matrix);
+	return cc_matrix_multiply(matrix, ccMatrixB, ccMatrixA);
 }
 
-float *ccMatrixTranslate(float *matrix, float x, float y, float z)
+float *cc_matrix_translate(float *matrix, float x, float y, float z)
 {
-	ccMatrixCopy(ccMatrixA, matrix);
-	ccMatrixTranslation(ccMatrixB, x, y, z);
-	return ccMatrixMultiply(matrix, ccMatrixB, ccMatrixA);
+	cc_matrix_copy(ccMatrixA, matrix);
+	cc_translation_matrix(ccMatrixB, x, y, z);
+	return cc_matrix_multiply(matrix, ccMatrixB, ccMatrixA);
 }
 
-float *ccMatrixInverse(float *matrix)
+float *cc_matrix_inverse(float *matrix)
 {
-	ccMatrixCopy(ccMatrixA, matrix);
-	return ccMatrixInvert(matrix, ccMatrixA);
+	cc_matrix_copy(ccMatrixA, matrix);
+	return cc_matrix_invert(matrix, ccMatrixA);
 }
 

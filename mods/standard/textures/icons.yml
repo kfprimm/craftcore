@@ -3,5 +3,5 @@ atlas:
   name: icons
   url: assets/gui/icons.png
   sub:
-    name: cursor
-    rect: [0,  0, 15, 15]
+    - name: cursor
+      rect: [0,  0, 15, 15]
