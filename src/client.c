@@ -71,12 +71,13 @@ void HookFunc(ccEvent *ev)
 int main()
 {
 	ccEventStartup();
-
+	ccUIStartup();
+	ccLuaStartup();
+			
 	ccOpenContext("CraftCore", 640, 480);
 	ccRenderStartup();
-	ccUIStartup();
 
-	ccLuaStartup();
+
 	
 	ccEntityPosition(&camera, 0,6,CHUNKSIZE*4);
 	

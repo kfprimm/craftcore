@@ -39,8 +39,8 @@ void ccRenderStartup()
 	ccRender3D();
 	ccChunksStartup();
 	
-	TestChunk = ccNewChunk();
-	ccChunkBuild(TestChunk);
+	//TestChunk = ccNewChunk();
+	//ccChunkBuild(TestChunk);
 	
 	ccEntityInit(&camera);
 }

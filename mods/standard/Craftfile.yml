@@ -1,0 +1,22 @@
+
+craft_mod:
+  meta:
+    name:    CraftCore Standard
+    author:  Kevin Primm
+    version: 0.0.1pre0
+    website: http\://craftcore.org/
+
+  atlases:
+    - textures/terrain.yml
+    - textures/gui.yml
+    - textures/icons.yml
+        
+  blocks:
+    - blocks/dirt.yml
+    - blocks/grass.yml
+
+  hud:
+    size:
+      width:  640
+      height: 480
+    script: scripts/ui.lua

@@ -1,0 +1,10 @@
+
+atlas:
+  url: assets/terrain.png
+  sub:
+    - name: dirt
+      rect: [32, 0, 48, 16]
+    - name: grass
+      rect: [0, 0, 16, 16]
+    - name: grass_side
+      rect: [48, 0, 64, 16]

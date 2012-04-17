@@ -8,14 +8,7 @@
 
 #include <noise.h>
 
-ccSide  ccSides[3] =	{ {32.0/256.0, 0.0, 48.0/256.0, 16.0/256.0, 1.0, 1.0, 1.0},
-												{0.0, 0.0, 16.0/256.0, 16.0/256.0, 107.0/255.0, 197.0/255.0, 70.0/255.0},
-												{48.0/256.0, 0.0, 64.0/256.0, 16.0/256.0, 1.0, 1.0, 1.0},
-											};
-
-ccBlock ccBlocks[2] =	{ { "Dirt", { &ccSides[0], &ccSides[0], &ccSides[0], &ccSides[0], &ccSides[0], &ccSides[0] } },
-												{ "Grass", { &ccSides[2], &ccSides[2], &ccSides[0], &ccSides[1], &ccSides[2], &ccSides[2] } }
-											};
+ccBlock **ccBlocks = NULL;
 
 float          ccChunkPosition[6][CHUNKCUBECOUNT*4*3];
 float          ccChunkTextureData[6][CHUNKCUBECOUNT*4*2];
@@ -127,7 +120,7 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 		break;
 	}
 	
-	ccSide *side = ccBlocks[block - 1].side[dir];
+	ccSide *side = ccBlocks[block - 1]->side[dir];
 		
 	clr[cnt*16 +  0] = side->r * shade;
 	clr[cnt*16 +  1] = side->g * shade;
@@ -149,17 +142,17 @@ void ccChunkDataAddFace(char block, int dir, float x, float y, float z)
 	clr[cnt*16 + 14] = side->b * shade;
 	clr[cnt*16 + 15] = 1.0;
 	
-	tex[cnt*8 + 0] = side->left;
-	tex[cnt*8 + 1] = side->bottom;
+	tex[cnt*8 + 0] = side->texture->left;
+	tex[cnt*8 + 1] = side->texture->bottom;
 	
-	tex[cnt*8 + 2] = side->right;
-	tex[cnt*8 + 3] = side->bottom;
+	tex[cnt*8 + 2] = side->texture->right;
+	tex[cnt*8 + 3] = side->texture->bottom;
 	
-	tex[cnt*8 + 4] = side->right;
-	tex[cnt*8 + 5] = side->top;
+	tex[cnt*8 + 4] = side->texture->right;
+	tex[cnt*8 + 5] = side->texture->top;
 	
-	tex[cnt*8 + 6] = side->left;
-	tex[cnt*8 + 7] = side->top;
+	tex[cnt*8 + 6] = side->texture->left;
+	tex[cnt*8 + 7] = side->texture->top;
 	
 	idx[cnt*6 + 0] = cnt*4 + 0;
 	idx[cnt*6 + 1] = cnt*4 + 1;
@@ -253,29 +246,6 @@ void ccChunkRender(ccChunk *chunk)
 
 void ccChunksStartup()
 {
-	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
-		printf("BAD IL VERSION!\n");
-	
-	ilInit();
-	ilGenImages(1, &image);
-	ilBindImage(image);
-	
-	char success = ilLoadImage((const ILstring)"mods/standard/textures/terrain.png");
-	if (success)
-	{
-		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-		if (!success)
-			printf("Failed to convert image!\n");
-		
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
-	}
-	else
-		printf("Failed to load!\n");
-		
-	ilDeleteImages(1, &image); 
+
 }
 

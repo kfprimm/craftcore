@@ -38,22 +38,25 @@ void ccAtlasUpload(ccAtlas *atlas)
 	glTexImage2D(GL_TEXTURE_2D, 0, atlas->bpp, atlas->width, atlas->height, 0, atlas->format, GL_UNSIGNED_BYTE, atlas->data);
 }
 
-ccImage *ccAtlasImage(ccAtlas *atlas, int left, int top, int right, int bottom)
+ccTexture *ccAtlasTexture(ccAtlas *atlas, int left, int top, int right, int bottom)
 {
-	ccImage *image = ccNew(ccImage);
-	image->atlas  = atlas;
-	image->left   = (float)left/atlas->width;
-	image->top    = (float)top/atlas->height;
-	image->right  = (float)right/atlas->width;
-	image->bottom = (float)bottom/atlas->height;
-	image->width  = right - left;
-	image->height = bottom - top;
-	return image;
+	ccTexture *texture = ccNew(ccTexture);
+	texture->atlas  = atlas;
+	texture->left   = (float)left/atlas->width;
+	texture->top    = (float)top/atlas->height;
+	texture->right  = (float)right/atlas->width;
+	texture->bottom = (float)bottom/atlas->height;
+	texture->width  = right - left;
+	texture->height = bottom - top;
+	return texture;
 }
 
 void ccUIStartup()
 {
-
+	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
+		printf("BAD IL VERSION!\n");
+	
+	ilInit();
 }
 
 void ccDrawRect(float x, float y, float width, float height)
@@ -70,23 +73,23 @@ void ccDrawRect(float x, float y, float width, float height)
 	glEnd();
 }
 
-void ccDrawImage(ccImage *image, float x, float y)
+void ccDrawTexture(ccTexture *texture, float x, float y)
 {
-	if (image->atlas->texture == 0)
-		ccAtlasUpload(image->atlas);
+	if (texture->atlas->texture == 0)
+		ccAtlasUpload(texture->atlas);
 		
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, image->atlas->texture);
+	glBindTexture(GL_TEXTURE_2D, texture->atlas->texture);
 	
 	glBegin(GL_QUADS);
-	glTexCoord2f(image->left,image->top);
+	glTexCoord2f(texture->left,texture->top);
 	glVertex2f(x, y);
-	glTexCoord2f(image->left,image->bottom);
-	glVertex2f(x, y + image->height);
-	glTexCoord2f(image->right,image->bottom);
-	glVertex2f(x + image->width, y + image->height);
-	glTexCoord2f(image->right, image->top);
-	glVertex2f(x + image->width, y);
+	glTexCoord2f(texture->left,texture->bottom);
+	glVertex2f(x, y + texture->height);
+	glTexCoord2f(texture->right,texture->bottom);
+	glVertex2f(x + texture->width, y + texture->height);
+	glTexCoord2f(texture->right, texture->top);
+	glVertex2f(x + texture->width, y);
 	glEnd();	
 }
 

@@ -90,18 +90,18 @@ typedef struct ccAtlas
 	unsigned int texture;
 } ccAtlas;
 
-typedef struct ccImage
+typedef struct ccTexture
 {
 	ccAtlas *atlas;
 	float left, top, right, bottom;
 	int width, height;
-} ccImage;
+} ccTexture;
 
 ccAtlas *ccLoadAtlas(const char *path);
 void ccAtlasUpload(ccAtlas *atlas);
-ccImage *ccAtlasImage(ccAtlas *atlas, int left, int top, int right, int bottom);
+ccTexture *ccAtlasTexture(ccAtlas *atlas, int left, int top, int right, int bottom);
 
-void ccDrawImage(ccImage *image, float x, float y);
+void ccDrawTexture(ccTexture *image, float x, float y);
 void ccDrawRect(float x, float y, float width, float height);
 
 // Entity
@@ -132,7 +132,7 @@ typedef struct ccPlayer
 
 typedef struct ccSide
 {
-	ccImage *image;
+	ccTexture *texture;
 	float r, g, b;
 } ccSide;
 																

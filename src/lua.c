@@ -1,23 +1,33 @@
 
 #include <craftcore.h>
 
+LUALIB_API int luaopen_yaml(lua_State *L);
+
 lua_State *L;
 
 static int lua_ccLoadAtlas(lua_State *L)
 {
-	lua_pushlightuserdata(L, ccLoadAtlas(lua_tostring(L, 1)));
+	ccAtlas *atlas = ccLoadAtlas(lua_tostring(L, 1));
+	if (atlas)
+		lua_pushlightuserdata(L, atlas);
+	else
+		lua_pushnil(L);
 	return 1;
 }
 
-static int lua_ccAtlasImage(lua_State *L)
+static int lua_ccAtlasTexture(lua_State *L)
 {
-	lua_pushlightuserdata(L, ccAtlasImage(lua_touserdata(L, 1), lua_tointeger(L, 2), lua_tointeger(L, 3), lua_tointeger(L, 4), lua_tointeger(L, 5)));
+	ccTexture *texture = ccAtlasTexture(lua_touserdata(L, 1), lua_tointeger(L, 2), lua_tointeger(L, 3), lua_tointeger(L, 4), lua_tointeger(L, 5));
+	if (texture)
+		lua_pushlightuserdata(L, texture);
+	else
+		lua_pushnil(L);
 	return 1;
 }
 
-static int lua_ccDrawImage(lua_State *L)
+static int lua_ccDrawTexture(lua_State *L)
 {
-	ccDrawImage(lua_touserdata(L, 1), lua_tonumber(L, 2), lua_tonumber(L, 3));
+	ccDrawTexture(lua_touserdata(L, 1), lua_tonumber(L, 2), lua_tonumber(L, 3));
 	return 0;
 }
 
@@ -37,6 +47,7 @@ void ccLuaStartup()
 {
 	L = lua_open();
 	luaL_openlibs(L);
+	luaopen_yaml(L);
 	
 	lua_newtable(L);
 	lua_pushnumber(L, 1);
@@ -47,10 +58,10 @@ void ccLuaStartup()
 	lua_newtable(L);
 	lua_pushcfunction(L, lua_ccLoadAtlas);
 	lua_setfield(L, -2, "loadAtlas");
-	lua_pushcfunction(L, lua_ccAtlasImage);
-	lua_setfield(L, -2, "atlasImage");
-	lua_pushcfunction(L, lua_ccDrawImage);
-	lua_setfield(L, -2, "drawImage");
+	lua_pushcfunction(L, lua_ccAtlasTexture);
+	lua_setfield(L, -2, "atlasTexture");
+	lua_pushcfunction(L, lua_ccDrawTexture);
+	lua_setfield(L, -2, "drawTexture");
 	lua_pushcfunction(L, lua_ccContextWidth);
 	lua_setfield(L, -2, "contextWidth");
 	lua_pushcfunction(L, lua_ccContextHeight);

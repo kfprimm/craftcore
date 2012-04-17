@@ -1,4 +1,0 @@
-
-name    "Dirt"
-texture "dirt"
-
