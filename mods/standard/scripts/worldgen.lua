@@ -5,7 +5,7 @@ local octaves = 2
 local freq    = 4
 local seed    = 80185
 
-chunk = cc.worldAddChunk(world)
+chunk = cc.worldAddChunk(cm.world)
 
 for z = 0,CHUNKSIZE - 1 do
 	for x = 0,CHUNKSIZE - 1 do
@@ -19,15 +19,15 @@ for z = 0,CHUNKSIZE - 1 do
 		end
 		
 		result = (result * 2) + 3;
-		--[[for y = 0, CHUNKSIZE - 1 do
+		for y = 0, CHUNKSIZE - 1 do
 			if y + 1 < result then
-				cc.setChunkBlock(chunk, "dirt", x, y, z)
+				cc.chunkSetBlock(chunk, 1, x, y, z)
 			elseif y < result then
-				cc.setChunkBlock(chunk, "grass", x, y, z)
+				cc.chunkSetBlock(chunk, 2, x, y, z)
 			else
-				cc.setChunkBlock(chunk, nil, x, y, z)
+				cc.chunkSetBlock(chunk, nil, x, y, z)
 			end
-		end]]
+		end
 	end
 end
 

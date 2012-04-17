@@ -41,6 +41,13 @@ static int l_context_size(lua_State *L)
 	return 2;
 }
 
+static int l_world_add_chunk(lua_State *L)
+{
+	cc_world_t *world = (cc_world_t*)lua_touserdata(L, 1);
+	lua_pushlightuserdata(L, cc_world_add_chunk(world));
+	return 1;
+}
+
 void cc_startup_lua()
 {
 	L = lua_open();
@@ -63,6 +70,8 @@ void cc_startup_lua()
 	lua_setfield(L, -2, "drawTexture");
 	lua_pushcfunction(L, l_context_size);
 	lua_setfield(L, -2, "contextSize");
+	lua_pushcfunction(L, l_world_add_chunk);
+	lua_setfield(L, -2, "worldAddChunk");	
 	lua_setglobal(L, "cc");
 
 	if (luaL_loadfile(L, "scripts/boot.lua") == 0)

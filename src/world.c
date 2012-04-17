@@ -54,4 +54,11 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	glBindTexture(GL_TEXTURE_2D, world->texture);
 	
 	glPopMatrix();
+
+}
+cc_chunk_t *cc_world_add_chunk(cc_world_t *world)
+{
+	world->chunks = malloc(sizeof(cc_world_t*)*1);
+	world->chunks[0] = cc_new_chunk();
+	return world->chunks[0];
 }

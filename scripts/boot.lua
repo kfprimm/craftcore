@@ -33,7 +33,7 @@ function import_block(file)
 	log("Loaded '"..file.."'")
 end
 
-cm = { }
+cm = { world = nil }
 cm.meta = { name = "", author = "", version = "", website = ""}
 cm.textures = { }
 

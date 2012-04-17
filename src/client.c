@@ -80,7 +80,8 @@ int main()
 	
 	cc_startup_lua();
 
-	//luaL_dofile(L, "mods/standard/scripts/worldgen.lua");
+	luaL_loadfile(L, "mods/standard/scripts/worldgen.lua");
+	lua_call(L,0,0);
 
 	cc_context_open("CraftCore", 640, 480);
 	cc_startup_render();

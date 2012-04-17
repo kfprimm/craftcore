@@ -190,6 +190,7 @@ typedef struct cc_chunk_t
 cc_chunk_t *cc_new_chunk();
 char cc_chunk_check(cc_chunk_t *chunk, int x, int y, int z);
 void cc_chunk_render(cc_chunk_t *chunk);
+void cc_chunk_set_block(cc_chunk_t *chunk);
 void cc_startup_chunks();
 
 // World
@@ -197,6 +198,9 @@ void cc_startup_chunks();
 typedef struct cc_world_t
 {
 	cc_block_t **blocks;
+	cc_chunk_t **chunks;
+	int block_count, chunk_count;
+	
 	cc_camera_t *camera;
 	unsigned int texture;
 } cc_world_t;
@@ -204,6 +208,7 @@ typedef struct cc_world_t
 void cc_world_init(cc_world_t *world);
 void cc_world_build_chunk(cc_world_t *world, cc_chunk_t *chunk);
 void cc_world_render(cc_world_t *world, int width, int height);
+cc_chunk_t *cc_world_add_chunk(cc_world_t *world);
 
 // UI
 
