@@ -13,7 +13,7 @@ LIBS    = -lX11 -lIL -lGLEW -lGL -lGLU $(LUA_LIBS) $(ENET_LIBS) $(YAML_LIBS)
 
 IMPORT_DIR = mods/standard/assets
 
-OBJECTS = src/lua.o src/ui.o src/world.o src/camera.o src/entity.o src/chunk.o src/block.o src/render.o \
+OBJECTS = src/ui.o src/world.o src/camera.o src/entity.o src/chunk.o src/block.o src/render.o \
 					src/event.o src/hook.o src/system.o src/math.o src/noise/noise.o src/yaml/lyaml.o src/yaml/b64.o
 					
 HEADERS = src/craftcore.h src/keycodes.h src/noise/noise.h

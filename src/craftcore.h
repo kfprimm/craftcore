@@ -203,6 +203,7 @@ typedef struct cc_world_t
 } cc_world_t;
 
 void cc_world_init(cc_world_t *world);
+void cc_world_add_block(cc_world_t *world, cc_block_t *block);
 void cc_world_build_chunk(cc_world_t *world, cc_chunk_t *chunk);
 void cc_world_render(cc_world_t *world, int width, int height);
 cc_chunk_t *cc_world_add_chunk(cc_world_t *world);

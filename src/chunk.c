@@ -141,9 +141,9 @@ void cc_world_chunk_build(cc_world_t *world, cc_chunk_t *chunk)
 			{
 				if (chunk->block[x][y][z] == 0)
 					continue;
-					
-				cc_block_t *block = world->blocks[chunk->block[x][y][z] - 1];
 
+				cc_block_t *block = world->blocks[chunk->block[x][y][z] - 1];
+				printf("!!!%s\n", block->name);
 				if (cc_chunk_check(chunk, x, y, z - 1) < 1)
 					cc_chunk_data_add_face(block, CHUNK_BACK, x, y, z);
 							

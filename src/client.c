@@ -72,17 +72,36 @@ void HookFunc(cc_event_t *ev)
 
 cc_world_t world;
 
+lua_State *L;
+LUALIB_API int luaopen_yaml(lua_State *L);
+
 int main()
 {
 	cc_startup_event();
 	cc_startup_ui();
 	cc_world_init(&world);
 	
-	cc_startup_lua();
+	L = lua_open();
+	luaL_openlibs(L);
+	luaopen_yaml(L);
+	
+	lua_newtable(L);
+	lua_pushnumber(L, 1);
+	lua_pushstring(L, "standard");
+	lua_rawset(L, -3);
+	lua_setglobal(L, "arg");
+	
+	luaL_loadfile(L, "scripts/init.lua");
+	lua_call(L,0,0);
 
 	lua_getglobal(L, "cm");
 	lua_pushlightuserdata(L, &world);
 	lua_setfield(L, -2, "world");
+	
+	if (luaL_loadfile(L, "scripts/boot.lua") == 0)
+		lua_call(L, 0, 0);
+	else
+		fprintf(stdout, "Failed to load boot script!\n");
 
 	luaL_loadfile(L, "mods/standard/scripts/worldgen.lua");
 	lua_call(L,0,0);

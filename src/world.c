@@ -7,6 +7,7 @@
 
 void cc_world_init(cc_world_t *world)
 {
+	memset(world, 0, sizeof(cc_world_t));
 	cc_camera_t *camera = cc_new(camera);
 	cc_entity_init(&camera->ent);
 	
@@ -15,6 +16,17 @@ void cc_world_init(cc_world_t *world)
 	cc_camera_set_range(camera, 1.0, 1000.0);
 	
 	world->camera = camera;
+}
+
+void cc_world_add_block(cc_world_t *world, cc_block_t *block)
+{
+	if (world->blocks != NULL)
+		world->blocks = realloc(world->blocks, sizeof(cc_block_t*)*world->block_count + 1);		
+	else
+		world->blocks = malloc(sizeof(cc_block_t*));
+	
+	world->blocks[world->block_count] = block;
+	world->block_count += 1;	
 }
 
 void cc_world_render(cc_world_t *world, int width, int height)

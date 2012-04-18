@@ -4,6 +4,7 @@ ffi.cdef[[
 
 typedef void *cc_atlas_t;
 typedef void *cc_texture_t;
+typedef void *cc_block_t;
 typedef void *cc_chunk_t;
 typedef void *cc_world_t;
 
@@ -20,7 +21,14 @@ void cc_draw_rect(float x, float y, float width, float height);
 
 void cc_chunk_set_block(cc_chunk_t *chunk, char block, int x, int y, int z);
 
+void cc_world_add_block(cc_world_t *world, cc_block_t *block);
 cc_chunk_t *cc_world_add_chunk(cc_world_t *world);
+
+cc_block_t *cc_new_block();
+void cc_block_set_name(cc_block_t *block, const char *name);
+void cc_block_set_texture(cc_block_t *block, int side, cc_texture_t *texture);
+void cc_block_set_color(cc_block_t *block, int side, float r, float g, float b);
+
 
 ]]
 
@@ -31,7 +39,10 @@ function noise2(vec)
 end
 
 cc = {}
-cc.loadAtlas    = ffi.C.cc_load_atlas
-cc.atlasTexture = ffi.C.cc_atlas_texture
+cc.loadAtlas     = ffi.C.cc_load_atlas
+cc.atlasTexture  = ffi.C.cc_atlas_texture
 cc.worldAddChunk = ffi.C.cc_world_add_chunk
+cc.worldAddBlock = ffi.C.cc_world_add_block
 cc.chunkSetBlock = ffi.C.cc_chunk_set_block
+cc.newBlock      = ffi.C.cc_new_block
+cc.blockSetName  = ffi.C.cc_block_set_name

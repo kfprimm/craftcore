@@ -38,11 +38,8 @@ function import_block(file)
 			
 		end
 	end
+	cc.worldAddBlock(cm.world, block)
 end
-
-cm = { world = nil }
-cm.meta = { name = "", author = "", version = "", website = ""}
-cm.textures = { }
 
 local attr = load_yaml('Craftfile.yml', 'craft_mod')
 
