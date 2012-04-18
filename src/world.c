@@ -21,8 +21,6 @@ void cc_world_render(cc_world_t *world, int width, int height)
 {
 	float matrix[16];
 	
-	cc_render_3d();
-	
 	cc_camera_t *camera = world->camera;
 	
 	glViewport(0,0,width,height);
@@ -52,6 +50,8 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	glClientActiveTextureARB(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, world->texture);
+	
+	cc_chunk_render(world->chunks[0]);
 	
 	glPopMatrix();
 

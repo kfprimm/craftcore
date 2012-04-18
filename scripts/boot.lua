@@ -1,4 +1,6 @@
 
+dofile("scripts/loadenv.lua")
+
 log = print
 MOD_DIR = "mods/"..arg[1]
 
@@ -30,7 +32,12 @@ end
 
 function import_block(file)
 	local attr = load_yaml(file, 'block')
-	log("Loaded '"..file.."'")
+	local block = cc.newBlock()
+	for k,v in pairs(attr) do
+		if k == "texture" then
+			
+		end
+	end
 end
 
 cm = { world = nil }

@@ -19,14 +19,14 @@ cc_chunk_t *cc_new_chunk()
 	return chunk;
 }
 
-char ccChunkCheck(cc_chunk_t *chunk, int x, int y, int z)
+char cc_chunk_check(cc_chunk_t *chunk, int x, int y, int z)
 {
 	if (x < 0 || x > CHUNKSIZE - 1  || y < 0 || y > CHUNKSIZE - 1 || z < 0 || z > CHUNKSIZE - 1)
 		return -1;
 	return chunk->block[x][y][z];
 }
 
-void ccChunkDataAddFace(cc_block_t *block, int dir, float x, float y, float z)
+void cc_chunk_data_add_face(cc_block_t *block, int dir, float x, float y, float z)
 {
 	unsigned short cnt = ccChunkFaceCount[dir];
 	float *pos = ccChunkPosition[dir], *tex = ccChunkTextureData[dir], *clr = ccChunkColorData[dir];
@@ -125,7 +125,12 @@ void ccChunkDataAddFace(cc_block_t *block, int dir, float x, float y, float z)
 	ccChunkFaceCount[dir] += 1;
 }
 
-void ccWorldChunkBuild(cc_world_t *world, cc_chunk_t *chunk)
+void cc_chunk_set_block(cc_chunk_t *chunk, char block, int x, int y, int z)
+{
+	chunk->block[x][y][z] = block;
+}
+
+void cc_world_chunk_build(cc_world_t *world, cc_chunk_t *chunk)
 {
 	for (int i = 0;i < 6;i++)
 		ccChunkFaceCount[i] = 0;
@@ -139,23 +144,23 @@ void ccWorldChunkBuild(cc_world_t *world, cc_chunk_t *chunk)
 					
 				cc_block_t *block = world->blocks[chunk->block[x][y][z] - 1];
 
-				if (ccChunkCheck(chunk, x, y, z - 1) < 1)
-					ccChunkDataAddFace(block, CHUNK_BACK, x, y, z);
+				if (cc_chunk_check(chunk, x, y, z - 1) < 1)
+					cc_chunk_data_add_face(block, CHUNK_BACK, x, y, z);
 							
-				if (ccChunkCheck(chunk, x, y, z + 1) < 1)
-					ccChunkDataAddFace(block, CHUNK_FRONT, x, y, z);
+				if (cc_chunk_check(chunk, x, y, z + 1) < 1)
+					cc_chunk_data_add_face(block, CHUNK_FRONT, x, y, z);
 								
-				if (ccChunkCheck(chunk, x, y - 1, z) < 1)
-					ccChunkDataAddFace(block, CHUNK_BOTTOM, x, y, z);
+				if (cc_chunk_check(chunk, x, y - 1, z) < 1)
+					cc_chunk_data_add_face(block, CHUNK_BOTTOM, x, y, z);
 					
-				if (ccChunkCheck(chunk, x, y + 1, z) < 1)
-					ccChunkDataAddFace(block, CHUNK_TOP, x, y, z);
+				if (cc_chunk_check(chunk, x, y + 1, z) < 1)
+					cc_chunk_data_add_face(block, CHUNK_TOP, x, y, z);
 								
-				if (ccChunkCheck(chunk, x - 1, y, z) < 1)
-					ccChunkDataAddFace(block, CHUNK_LEFT, x, y, z);
+				if (cc_chunk_check(chunk, x - 1, y, z) < 1)
+					cc_chunk_data_add_face(block, CHUNK_LEFT, x, y, z);
 				
-				if (ccChunkCheck(chunk, x + 1, y, z) < 1)
-					ccChunkDataAddFace(block, CHUNK_RIGHT, x, y, z);
+				if (cc_chunk_check(chunk, x + 1, y, z) < 1)
+					cc_chunk_data_add_face(block, CHUNK_RIGHT, x, y, z);
 			}	
 
 	glGenBuffersARB(6, chunk->tri_buffer);

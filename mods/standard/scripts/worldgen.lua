@@ -17,7 +17,7 @@ for z = 0,CHUNKSIZE - 1 do
 			vec[2] = vec[2] * 2
 			amp = amp * 0.5
 		end
-		
+
 		result = (result * 2) + 3;
 		for y = 0, CHUNKSIZE - 1 do
 			if y + 1 < result then
@@ -25,7 +25,7 @@ for z = 0,CHUNKSIZE - 1 do
 			elseif y < result then
 				cc.chunkSetBlock(chunk, 2, x, y, z)
 			else
-				cc.chunkSetBlock(chunk, nil, x, y, z)
+				cc.chunkSetBlock(chunk, 0, x, y, z)
 			end
 		end
 	end

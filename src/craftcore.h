@@ -145,22 +145,19 @@ typedef struct cc_player_t
 
 } cc_player_t;
 
-
-
 // Blocks
 
-typedef struct cc_side_t
-{
-
-	float r, g, b;
-} cc_side_t;
-																
 typedef struct cc_block_t
 {
 	char *name;
 	cc_texture_t *texture[6];
 	float color[6][3];
 } cc_block_t;
+
+cc_block_t *cc_new_block();
+void cc_block_set_name(cc_block_t *block, const char *name);
+void cc_block_set_texture(cc_block_t *block, int side, cc_texture_t *texture);
+void cc_block_set_color(cc_block_t *block, int side, float r, float g, float b);
 
 // Chunk
 
@@ -190,7 +187,7 @@ typedef struct cc_chunk_t
 cc_chunk_t *cc_new_chunk();
 char cc_chunk_check(cc_chunk_t *chunk, int x, int y, int z);
 void cc_chunk_render(cc_chunk_t *chunk);
-void cc_chunk_set_block(cc_chunk_t *chunk);
+void cc_chunk_set_block(cc_chunk_t *chunk, char block, int x, int y, int z);
 void cc_startup_chunks();
 
 // World

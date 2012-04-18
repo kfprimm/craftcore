@@ -8,12 +8,14 @@ ENET_LIBS  = `pkg-config --libs libenet`
 YAML_FLAGS = `pkg-config --cflags yaml-0.1`
 YAML_LIBS  = `pkg-config --libs yaml-0.1`
 
-C_FLAGS = -Wall -std=c99 -Isrc $(LUA_FLAGS) $(ENET_FLAGS) $(YAML_FLAGS)
+C_FLAGS = -Wl,-E -Wall -std=c99 -Isrc $(LUA_FLAGS) $(ENET_FLAGS) $(YAML_FLAGS)
 LIBS    = -lX11 -lIL -lGLEW -lGL -lGLU $(LUA_LIBS) $(ENET_LIBS) $(YAML_LIBS)
 
 IMPORT_DIR = mods/standard/assets
 
-OBJECTS = src/lua.o src/ui.o src/world.o src/camera.o src/entity.o src/chunk.o src/render.o src/event.o src/hook.o src/system.o src/math.o src/noise/lnoise.o src/noise/noise.o src/yaml/lyaml.o src/yaml/b64.o
+OBJECTS = src/lua.o src/ui.o src/world.o src/camera.o src/entity.o src/chunk.o src/block.o src/render.o \
+					src/event.o src/hook.o src/system.o src/math.o src/noise/noise.o src/yaml/lyaml.o src/yaml/b64.o
+					
 HEADERS = src/craftcore.h src/keycodes.h src/noise/noise.h
 
 all: craftcore craftcore-server

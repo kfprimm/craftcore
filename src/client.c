@@ -80,8 +80,14 @@ int main()
 	
 	cc_startup_lua();
 
+	lua_getglobal(L, "cm");
+	lua_pushlightuserdata(L, &world);
+	lua_setfield(L, -2, "world");
+
 	luaL_loadfile(L, "mods/standard/scripts/worldgen.lua");
 	lua_call(L,0,0);
+	
+	cc_world_chunk_build(&world, world.chunks[0]);
 
 	cc_context_open("CraftCore", 640, 480);
 	cc_startup_render();
@@ -112,7 +118,9 @@ int main()
 		}
 		
 		cc_entity_move(world.camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));
+		cc_render_3d();
 		cc_world_render(&world, width, height);
+		cc_render_2d(width, height);
 		cc_ui_render();
 		cc_context_flip();
 	}
