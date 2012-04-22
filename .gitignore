@@ -1,2 +1,4 @@
 /craftcore
+/craftcore-server
 *.o
+/mods/standard/assets
