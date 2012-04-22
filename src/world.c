@@ -59,9 +59,7 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	cc_matrix_translate(matrix, -CHUNKSIZE,0.0f,CHUNKSIZE);
 	glMultMatrixf(matrix);
 	
-	glClientActiveTextureARB(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, world->texture);
+	cc_atlas_set(world->blocks[0]->texture[0]->atlas);
 	
 	cc_chunk_render(world->chunks[0]);
 	

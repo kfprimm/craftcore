@@ -105,15 +105,22 @@ int main()
 
 	luaL_loadfile(L, "mods/standard/scripts/worldgen.lua");
 	lua_call(L,0,0);
-	
-	cc_world_chunk_build(&world, world.chunks[0]);
 
-	cc_context_open("CraftCore", 640, 480);
+	lua_getglobal(L, "cm");
+	lua_getfield(L, -1, "meta");
+	lua_getfield(L, -1, "name");
+
+	cc_context_open(lua_tostring(L, -1), 640, 480);
+
+	lua_pop(L, 3);
+
 	cc_startup_render();
 
 	cc_entity_set_position(world.camera, 0,6,CHUNKSIZE*4);
 	
 	cc_hook_add(cc_event_hook, (CCHOOKFUNC)HookFunc);
+
+	cc_world_chunk_build(&world, world.chunks[0]);
 	
 	while (ccContinue)
 	{

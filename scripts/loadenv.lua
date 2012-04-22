@@ -39,10 +39,12 @@ function noise2(vec)
 end
 
 cc = {}
-cc.loadAtlas     = ffi.C.cc_load_atlas
-cc.atlasTexture  = ffi.C.cc_atlas_texture
-cc.worldAddChunk = ffi.C.cc_world_add_chunk
-cc.worldAddBlock = ffi.C.cc_world_add_block
-cc.chunkSetBlock = ffi.C.cc_chunk_set_block
-cc.newBlock      = ffi.C.cc_new_block
-cc.blockSetName  = ffi.C.cc_block_set_name
+cc.loadAtlas       = ffi.C.cc_load_atlas
+cc.atlasTexture    = ffi.C.cc_atlas_texture
+cc.worldAddChunk   = ffi.C.cc_world_add_chunk
+cc.worldAddBlock   = ffi.C.cc_world_add_block
+cc.chunkSetBlock   = ffi.C.cc_chunk_set_block
+cc.newBlock        = ffi.C.cc_new_block
+cc.blockSetName    = ffi.C.cc_block_set_name
+cc.blockSetTexture = ffi.C.cc_block_set_texture
+cc.blockSetColor   = ffi.C.cc_block_set_color

@@ -22,7 +22,14 @@ void cc_block_set_name(cc_block_t *block, const char *name)
 
 void cc_block_set_texture(cc_block_t *block, int side, cc_texture_t *texture)
 {
-	block->texture[side] = texture;
+	if (side < 0)
+		for (int i = 0;i < 6;i++)
+		{
+			if (block->texture[i] == NULL)
+				block->texture[i] = texture;
+		}
+	else
+		block->texture[side] = texture;
 }
 
 void cc_block_set_color(cc_block_t *block, int side, float r, float g, float b)

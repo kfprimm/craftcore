@@ -30,12 +30,29 @@ function import_atlas(file)
 	end
 end
 
+function import_side(block, side, attr)
+	for k,v in pairs(attr) do
+		if k == "texture" then
+			cc.blockSetTexture(block, side, cm.textures[attr.texture])
+		elseif k == "color" then
+			cc.blockSetColor(block, side, attr.color[1]/255, attr.color[2]/255, attr.color[3]/255)
+		end
+	end
+end
+
 function import_block(file)
 	local attr = load_yaml(file, 'block')
+	log("Importing '"..attr['name'].."'")
 	local block = cc.newBlock()
 	for k,v in pairs(attr) do
 		if k == "texture" then
-			
+			cc.blockSetTexture(block, -1, cm.textures[v])
+		elseif k == "name" then
+			cc.blockSetName(block, v)
+		elseif k == "top" then
+			import_side(block, CHUNK_TOP, v)
+		elseif k == "bottom" then
+			import_side(block, CHUNK_BOTTOM, v)
 		end
 	end
 	cc.worldAddBlock(cm.world, block)

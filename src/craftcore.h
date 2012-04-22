@@ -102,6 +102,7 @@ typedef struct cc_texture_t
 } cc_texture_t;
 
 cc_atlas_t *cc_load_atlas(const char *path);
+void cc_atlas_set(cc_atlas_t *atlas);
 void cc_atlas_upload(cc_atlas_t *atlas);
 cc_texture_t *cc_atlas_texture(cc_atlas_t *atlas, int left, int top, int right, int bottom);
 

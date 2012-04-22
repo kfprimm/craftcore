@@ -38,6 +38,16 @@ void cc_atlas_upload(cc_atlas_t *atlas)
 	glTexImage2D(GL_TEXTURE_2D, 0, atlas->bpp, atlas->width, atlas->height, 0, atlas->format, GL_UNSIGNED_BYTE, atlas->data);
 }
 
+void cc_atlas_set(cc_atlas_t *atlas)
+{
+	if (atlas->texture == 0)
+		cc_atlas_upload(atlas);
+	
+	glClientActiveTextureARB(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, atlas->texture);
+}
+
 cc_texture_t *cc_atlas_texture(cc_atlas_t *atlas, int left, int top, int right, int bottom)
 {
 	cc_texture_t *texture = cc_new(texture);
@@ -75,11 +85,7 @@ void cc_draw_rect(float x, float y, float width, float height)
 
 void cc_texture_draw(cc_texture_t *texture, float x, float y)
 {
-	if (texture->atlas->texture == 0)
-		cc_atlas_upload(texture->atlas);
-		
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture->atlas->texture);
+	cc_atlas_set(texture->atlas);
 	
 	glBegin(GL_QUADS);
 	glTexCoord2f(texture->left,texture->top);

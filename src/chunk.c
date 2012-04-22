@@ -143,7 +143,7 @@ void cc_world_chunk_build(cc_world_t *world, cc_chunk_t *chunk)
 					continue;
 
 				cc_block_t *block = world->blocks[chunk->block[x][y][z] - 1];
-				printf("!!!%s\n", block->name);
+
 				if (cc_chunk_check(chunk, x, y, z - 1) < 1)
 					cc_chunk_data_add_face(block, CHUNK_BACK, x, y, z);
 							
@@ -167,9 +167,10 @@ void cc_world_chunk_build(cc_world_t *world, cc_chunk_t *chunk)
 	glGenBuffersARB(6, chunk->pos_buffer);
 	glGenBuffersARB(6, chunk->tex_buffer);
 	glGenBuffersARB(6, chunk->clr_buffer);	
-		
+
 	for (int i = 0;i < 6;i++)
 	{
+
 		chunk->tri_count[i] = ccChunkFaceCount[i];
 		
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB,chunk->pos_buffer[i]);
