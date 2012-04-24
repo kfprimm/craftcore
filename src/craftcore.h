@@ -20,9 +20,34 @@
 
 // Math
 
+typedef float cc_vec3_t[3];
+
+typedef struct cc_box_t
+{
+	cc_vec3_t min, max;
+} cc_box_t;
+
+typedef struct cc_octree_t
+{
+	struct cc_octree_t *child0, *child1, *child2, *child3;
+	struct cc_octree_t *child4, *child5, *child6, *child7;
+	cc_box_t bounds;
+	void *data;
+} cc_octree_t;
+
+void cc_octree_init(cc_octree_t *tree, cc_box_t *box);
+
 #define PI 3.14159265
 #define D2R(v) ((v)*(PI/180.0f))
 #define R2D(v) ((v)*(180.0f/PI))
+
+void cc_vec3_add(float *out, float *a, float *b);
+void cc_vec3_sub(float *out, float *a, float *b);
+void cc_vec3_scale(float *out, float *vec, float factor);
+
+int cc_line_intersection( float dst1, float dst2, float *p1, float *p2, float *hit);
+int cc_vec3_in_box( float *vec, float *min, float *max, const int axis);
+int cc_box_line_intersection( float *min, float *max, float *l1, float *l2, float *hit);
 
 float *cc_matrix_copy(float *dst, float *src);
 float *cc_matrix_multiply(float *out, float *a, float *b);
@@ -183,12 +208,14 @@ typedef struct cc_chunk_t
 	unsigned short tri_count[6];
 	unsigned int pos_buffer[6], tex_buffer[6];
 	unsigned int clr_buffer[6], tri_buffer[6];
+	cc_octree_t *tree;
 } cc_chunk_t;
 
 cc_chunk_t *cc_new_chunk();
 char cc_chunk_check(cc_chunk_t *chunk, int x, int y, int z);
 void cc_chunk_render(cc_chunk_t *chunk);
 void cc_chunk_set_block(cc_chunk_t *chunk, char block, int x, int y, int z);
+void cc_chunk_build_tree(cc_chunk_t *chunk);
 void cc_startup_chunks();
 
 // World

@@ -120,7 +120,7 @@ int main()
 	
 	cc_hook_add(cc_event_hook, (CCHOOKFUNC)HookFunc);
 
-	cc_world_chunk_build(&world, world.chunks[0]);
+	cc_world_build_chunk(&world, world.chunks[0]);
 	
 	while (ccContinue)
 	{

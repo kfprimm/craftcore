@@ -34,7 +34,6 @@ void cc_chunk_data_add_face(cc_block_t *block, int dir, float x, float y, float 
 	
 	#define set(i, x, y, z) pos[(cnt*12) + (i*3)+0] = (x)*2;pos[(cnt*12) + (i*3)+ 1] = (y)*2;pos[(cnt*12) + (i*3)+2] = (z)*2;
 	
-	
 	float shade = 1.0;
 	switch (dir)
 	{
@@ -130,7 +129,12 @@ void cc_chunk_set_block(cc_chunk_t *chunk, char block, int x, int y, int z)
 	chunk->block[x][y][z] = block;
 }
 
-void cc_world_chunk_build(cc_world_t *world, cc_chunk_t *chunk)
+void cc_chunk_build_tree(cc_chunk_t *chunk)
+{
+	
+}
+
+void cc_world_build_chunk(cc_world_t *world, cc_chunk_t *chunk)
 {
 	for (int i = 0;i < 6;i++)
 		ccChunkFaceCount[i] = 0;
