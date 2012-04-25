@@ -19,4 +19,4 @@ craft_mod:
     size:
       width:  640
       height: 480
-    script: scripts/ui.lua
+    draw: scripts/ui.lua

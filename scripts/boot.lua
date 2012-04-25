@@ -1,8 +1,10 @@
 
-dofile("scripts/loadenv.lua")
-
 log = print
 MOD_DIR = "mods/"..arg[1]
+
+package.path = package.path..";"..MOD_DIR.."/?.lua;"..MOD_DIR.."/?"
+
+require("scripts/loadenv")
 
 function load_yaml(file, tag)
 	input = io.open(MOD_DIR.."/"..file)
@@ -72,7 +74,13 @@ for k,v in pairs(attr) do
 	elseif k == "blocks" then
 		for i,d in ipairs(v) do
 			import_block(d)
-		end		
+		end
+	elseif k == "hud" then
+		for n,f in pairs(v) do
+			if n == "draw" then
+				cm.renderHUD = loadfile(MOD_DIR.."/"..f)
+			end
+		end
 	end		
 end
 

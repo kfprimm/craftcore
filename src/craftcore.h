@@ -77,7 +77,7 @@ void cc_startup_event();
 
 void cc_system_poll();
 
-int cc_context_open(char *title, int width, int height);
+int cc_context_open(const char *title, int width, int height);
 void cc_context_close();
 void cc_context_flip();
 void cc_context_size(int *width, int *height);
@@ -212,7 +212,7 @@ cc_chunk_t *cc_world_add_chunk(cc_world_t *world);
 // UI
 
 void cc_startup_ui();
-void cc_ui_render();
+void cc_ui_render(lua_State *L);
 
 // Networking
 
@@ -223,10 +223,5 @@ void cc_startup_network();
 void cc_render_2d(int width, int height);
 void cc_render_3d();
 void cc_startup_render();
-
-// Lua
-
-extern lua_State *L;
-void cc_startup_lua();
 
 #endif

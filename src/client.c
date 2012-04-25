@@ -147,7 +147,7 @@ int main()
 		cc_render_3d();
 		cc_world_render(&world, width, height);
 		cc_render_2d(width, height);
-		cc_ui_render();
+		cc_ui_render(L);
 		cc_context_flip();
 	}
 	cc_context_close();

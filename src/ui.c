@@ -99,16 +99,16 @@ void cc_texture_draw(cc_texture_t *texture, float x, float y)
 	glEnd();	
 }
 
-void cc_ui_render()
+void cc_ui_render(lua_State *L)
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor3f(1,1,1);
 	
-	/*lua_getglobal(L, "cm");
+	lua_getglobal(L, "cm");
 	lua_getfield(L, -1, "renderHUD");
 	lua_call(L, 0, 0);
-	lua_pop(L, 1);*/
+	lua_pop(L, 1);
 	
 	glDisable(GL_BLEND);
 }
