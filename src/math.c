@@ -2,6 +2,61 @@
 #include <craftcore.h>
 #include <math.h>
 
+void cc_octree_print(cc_octree_t *tree, int depth)
+{
+	int leaf = TRUE;
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z] != NULL)
+					leaf = FALSE;
+	
+	printf("%*s", depth, " ");
+	if (leaf)
+		printf("LEAF\n");
+	else
+		printf("BRANCH\n");
+	
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z] != NULL)
+					cc_octree_print(tree->child[x][y][z], depth + 1);
+}
+
+void cc_octree_init(cc_octree_t *tree)
+{
+	memset(tree, 0, sizeof(cc_octree_t));
+}
+
+void cc_octree_free(cc_octree_t *tree)
+{
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				cc_octree_free(tree->child[x][y][z]);
+}
+
+int cc_octree_line_intersection( cc_octree_t *tree, float *l1, float *l2, float *hit)
+{
+	int leaf = TRUE;
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z] != NULL)
+					leaf = FALSE;
+	
+	if (leaf)
+		return cc_box_line_intersection(&tree->bounds.min, &tree->bounds.max, l1, l2, hit);
+	
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+			{
+				
+			}
+}
+
 void cc_vec3_add(float *out, float *a, float *b)
 {
 	out[0] = a[0] + b[0];
@@ -21,6 +76,18 @@ void cc_vec3_scale(float *out, float *vec, float factor)
 	out[0] = vec[0] * factor;
 	out[1] = vec[1] * factor;
 	out[2] = vec[2] * factor;
+}
+
+float cc_vec3_length(float *vec)
+{
+	return sqrt(vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]);
+}
+
+float cc_vec3_distance(float *vec1, float *vec2)
+{
+	float vec[3];
+	cc_vec3_sub(vec, vec2, vec1);
+	return cc_vec3_length(&vec);
 }
 
 int cc_line_intersection( float dst1, float dst2, float *p1, float *p2, float *hit)
