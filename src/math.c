@@ -37,20 +37,40 @@ void cc_octree_free(cc_octree_t *tree)
 				cc_octree_free(tree->child[x][y][z]);
 }
 
-int cc_octree_line_intersection( cc_octree_t *tree, float *l1, float *l2, float *hit)
+int cc_octree_line_intersection( cc_octree_t *tree, cc_line_t *line, cc_vec3_t *hit, float *t)
 {
-	if (!cc_box_line_intersection(&tree->bounds, l1, l2, hit))
+	if (!cc_box_line_intersection(&tree->bounds, line, hit, t))
 		return 0;
-
-	float t;	
+	return 1;
+	
+	cc_vec3_t newhit;
+	float newt = 2.0, r;	
+	int match = FALSE, parent = FALSE;
+	
 	for (int z = 0;z < 2;z++)
 		for (int y = 0;y < 2;y++)
 			for (int x = 0;x < 2;x++)
 				if (tree->child[x][y][z] != NULL)
-					if (cc_octree_line_intersection(&tree->child[x][y][z], l1, l2, &t))
-						if (t < *hit)
-							*hit = t;
-
+				{
+					parent = TRUE;
+					if (cc_octree_line_intersection(&tree->child[x][y][z], line, &newhit, &r))
+					{
+						if (r < newt)
+						{
+							newt = r;
+							hit->x = newhit.x;
+							hit->y = newhit.y;
+							hit->z = newhit.z;
+						}
+						match = TRUE;
+					}
+				}
+				
+	if (parent && !match)
+		return 0;
+		
+	*t = newt;
+	
 	return 1;
 }
 
@@ -87,50 +107,53 @@ float cc_vec3_distance(float *vec1, float *vec2)
 	return cc_vec3_length(vec);
 }
 
-void cc_line_point(float *l1, float *l2, float t, float *p)
+void cc_line_point(cc_line_t *line, float t, cc_vec3_t *out)
 {
 	float diff[3];
-	cc_vec3_sub(diff, l2, l1);
+	cc_vec3_sub(diff, &line->p1, &line->p0);
 	cc_vec3_scale(diff, diff, t);
-	cc_vec3_add(p, l1, diff);
+	cc_vec3_add(out, &line->p0, diff);
 }
 
-int cc_line_intersection( float dst1, float dst2, float *p1, float *p2, float *hit)
+int cc_line_intersection(float dst1, float dst2, cc_line_t *line, cc_vec3_t *hit, float *t)
 {
-	if ( (dst1 * dst2) >= 0.0f) return 0;
+	if ( dst1 * dst2 >= 0.0f) return 0;
 	if ( dst1 == dst2) return 0; 
-	*hit = -dst1/(dst2-dst1);
+	*t = -dst1/(dst2-dst1);
+	cc_line_point(line, *t, hit);
 	return 1;
 }
 
-int cc_vec3_in_box( float *vec, cc_box_t *box, const int axis)
+int cc_vec3_in_box( cc_vec3_t *hit, cc_box_t *box, const int axis)
 {
-	if ( axis==1 && vec[2] > box->min.z && vec[2] < box->max.z && vec[1] > box->min.y && vec[1] < box->max.y) return 1;
-	if ( axis==2 && vec[2] > box->min.z && vec[2] < box->max.z && vec[0] > box->min.x && vec[0] < box->max.x) return 1;
-	if ( axis==3 && vec[0] > box->min.x && vec[0] < box->max.x && vec[1] > box->min.y && vec[1] < box->max.y) return 1;
+	if ( axis==1 && hit->z > box->min.z && hit->z < box->max.z && hit->y > box->min.y && hit->y < box->max.y) return 1;
+	if ( axis==2 && hit->z > box->min.z && hit->z < box->max.z && hit->x > box->min.x && hit->x < box->max.x) return 1;
+	if ( axis==3 && hit->x > box->min.x && hit->x < box->max.x && hit->y > box->min.y && hit->y < box->max.y) return 1;
 	return 0;
 }
 
-int cc_box_line_intersection( cc_box_t *box, float *l1, float *l2, float *hit)
+int cc_box_line_intersection( cc_box_t *box, cc_line_t *line, cc_vec3_t *hit, float *t)
 {
-	if (l2[0] < box->min.x && l1[0] < box->min.x) return 0;
-	if (l2[0] > box->max.x && l1[0] > box->max.x) return 0;
-	if (l2[1] < box->min.y && l1[1] < box->min.y) return 0;
-	if (l2[1] > box->max.y && l1[1] > box->max.y) return 0;
-	if (l2[2] < box->min.z && l1[2] < box->min.z) return 0;
-	if (l2[2] > box->max.z && l1[2] > box->max.z) return 0;
-	if (l1[0] > box->min.x && l1[0] < box->max.x && l1[1] > box->min.y && l1[1] < box->max.y && l1[2] > box->min.z && l1[2] < box->max.z)
-	{
-		*hit = 0;
-		return 1;
+	if (line->p0.x < box->min.x && line->p0.x < box->min.x) return 0;
+	if (line->p0.x > box->max.x && line->p0.x > box->max.x) return 0;
+	if (line->p0.y < box->min.y && line->p0.y < box->min.y) return 0;
+	if (line->p0.y > box->max.y && line->p0.y > box->max.y) return 0;
+	if (line->p0.z < box->min.z && line->p0.z < box->min.z) return 0;
+	if (line->p0.z > box->max.z && line->p0.z > box->max.z) return 0;
+	if (line->p0.x > box->min.x && line->p0.x < box->max.x && line->p0.y > box->min.y && line->p0.y < box->max.y && line->p0.z > box->min.z && line->p0.z < box->max.z) 
+  {
+  	*t = 0.0; 
+  	hit->x = line->p0.x;
+  	hit->y = line->p0.y;
+  	hit->z = line->p0.z;
+	  return 1;
 	}
-	
-	if ( (cc_line_intersection( l1[0]-box->min.x, l2[0]-box->min.x, l1, l2, hit) && cc_vec3_in_box( hit, box, 1 ))
-		|| (cc_line_intersection( l1[1]-box->min.y, l2[1]-box->min.y, l1, l2, hit) && cc_vec3_in_box( hit, box, 2 )) 
-		|| (cc_line_intersection( l1[2]-box->min.z, l2[2]-box->min.z, l1, l2, hit) && cc_vec3_in_box( hit, box, 3 )) 
-		|| (cc_line_intersection( l1[0]-box->max.x, l2[0]-box->max.x, l1, l2, hit) && cc_vec3_in_box( hit, box, 1 )) 
-		|| (cc_line_intersection( l1[1]-box->max.y, l2[1]-box->max.y, l1, l2, hit) && cc_vec3_in_box( hit, box, 2 )) 
-		|| (cc_line_intersection( l1[2]-box->max.z, l2[2]-box->max.z, l1, l2, hit) && cc_vec3_in_box( hit, box, 3 )))
+	if ( (cc_line_intersection( line->p0.x-box->min.x, line->p0.x-box->min.x, line, hit, t) && cc_vec3_in_box( hit, box, 1 ))
+		|| (cc_line_intersection( line->p0.y-box->min.y, line->p0.y-box->min.y, line, hit, t) && cc_vec3_in_box( hit, box, 2 )) 
+		|| (cc_line_intersection( line->p0.z-box->min.z, line->p0.z-box->min.z, line, hit, t) && cc_vec3_in_box( hit, box, 3 )) 
+		|| (cc_line_intersection( line->p0.x-box->max.x, line->p0.x-box->max.x, line, hit, t) && cc_vec3_in_box( hit, box, 1 )) 
+		|| (cc_line_intersection( line->p0.y-box->max.y, line->p0.y-box->max.y, line, hit, t) && cc_vec3_in_box( hit, box, 2 )) 
+		|| (cc_line_intersection( line->p0.z-box->max.z, line->p0.z-box->max.z, line, hit, t) && cc_vec3_in_box( hit, box, 3 )))
 		return 1;
 
 	return 0;

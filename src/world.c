@@ -29,6 +29,58 @@ void cc_world_add_block(cc_world_t *world, cc_block_t *block)
 	world->block_count += 1;	
 }
 
+void cc_octree_render(cc_octree_t *tree)
+{
+	int parent = FALSE;
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z])
+				{
+					parent = TRUE;
+					cc_octree_render(tree->child[x][y][z]);
+				}
+	
+	if (parent)
+		glLineWidth(1.0);
+	else
+		glLineWidth(1.5);
+
+	glBegin(GL_QUADS);
+	
+	glVertex3f(tree->bounds.min.x, tree->bounds.min.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.min.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.max.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.max.y, tree->bounds.min.z);
+	
+	glVertex3f(tree->bounds.min.x, tree->bounds.min.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.min.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.max.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.max.y, tree->bounds.max.z);
+	
+	glVertex3f(tree->bounds.min.x, tree->bounds.max.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.max.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.max.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.max.y, tree->bounds.max.z);
+	
+	glVertex3f(tree->bounds.min.x, tree->bounds.min.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.min.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.min.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.min.y, tree->bounds.max.z);
+	
+	glVertex3f(tree->bounds.max.x, tree->bounds.min.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.max.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.max.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.max.x, tree->bounds.min.y, tree->bounds.max.z);
+	
+	glVertex3f(tree->bounds.min.x, tree->bounds.min.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.max.y, tree->bounds.min.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.max.y, tree->bounds.max.z);
+	glVertex3f(tree->bounds.min.x, tree->bounds.min.y, tree->bounds.max.z);	
+	
+	glEnd();
+}
+
 void cc_world_render(cc_world_t *world, int width, int height)
 {
 	float matrix[16];
@@ -46,7 +98,7 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	float ratio=(float)width/(float)height;
 	gluPerspective(R2D(atan((1.0f/(world->camera->zoom*ratio)))*2.0f), ratio, world->camera->near, world->camera->far);
 	
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	glMatrixMode(GL_MODELVIEW);
 
@@ -66,6 +118,14 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	cc_atlas_set(world->blocks[0]->texture[0]->atlas);
 	
 	cc_chunk_render(world->chunks[0]);
+	
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_TEXTURE_2D);
+	glColor3f(1.0, 1.0, 1.0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	cc_octree_render(world->chunks[0]->tree);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_CULL_FACE);
 	
 	glPopMatrix();
 

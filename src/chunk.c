@@ -140,13 +140,13 @@ cc_octree_t *cc_chunk_build_leaf(cc_chunk_t *chunk, int x0, int y0, int z0, int 
 		result = cc_new(octree);
 		cc_octree_init(result);
 		
-		result->bounds.min.x = x0;
-		result->bounds.min.y = y0;
-		result->bounds.min.z = z0;
+		result->bounds.min.x = x0 * 2;
+		result->bounds.min.y = y0 * 2;
+		result->bounds.min.z = z0 * 2;
 		
-		result->bounds.max.x = x1;
-		result->bounds.max.y = y1;
-		result->bounds.max.z = z1;
+		result->bounds.max.x = x1 * 2;
+		result->bounds.max.y = y1 * 2;
+		result->bounds.max.z = z1 * 2;
 	}
 	else
 	{
@@ -168,13 +168,13 @@ cc_octree_t *cc_chunk_build_leaf(cc_chunk_t *chunk, int x0, int y0, int z0, int 
 			result = cc_new(octree);
 			cc_octree_init(result);
 		
-			result->bounds.min.x = x0;
-			result->bounds.min.y = y0;
-			result->bounds.min.z = z0;
+			result->bounds.min.x = x0 * 2;
+			result->bounds.min.y = y0 * 2;
+			result->bounds.min.z = z0 * 2;
 		
-			result->bounds.max.x = x1;
-			result->bounds.max.y = y1;
-			result->bounds.max.z = z1;
+			result->bounds.max.x = x1 * 2;
+			result->bounds.max.y = y1 * 2;
+			result->bounds.max.z = z1 * 2;
 		
 			for (int z = 0;z < 2;z++)
 				for (int y = 0;y < 2;y++)

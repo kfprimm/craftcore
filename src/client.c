@@ -2,10 +2,16 @@
 #include <craftcore.h>
 #include <stdio.h>
 
+// TODO: Remove
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 int ccContinue = TRUE;
 float ccMove = 0.0f;
 int ccLastMouseX = 0, ccLastMouseY = 0;
 int ccMouseX = 0, ccMouseY = 0;
+
+int ccMouseDown1 = 0;
 
 int ccKeyW = 0, ccKeyS = 0, ccKeyA = 0, ccKeyD = 0, ccKeySpace = 0;
 
@@ -55,13 +61,17 @@ void HookFunc(cc_event_t *ev)
 			ccLookAround = 1;
 			cc_mouse_visible(!ccLookAround);
 		}
+		if (ev->data == 1)
+			ccMouseDown1 = 1;
 		break;
 	case EVENT_MOUSEUP:
 		if (ev->data == 2)
 		{
 			ccLookAround = 0;
-			cc_mouse_visible(!ccLookAround);		
+			cc_mouse_visible(!ccLookAround);	
 		}
+		if (ev->data == 1)
+			ccMouseDown1 = 0;
 		break;
 	case EVENT_MOUSEMOVE:
 		ccLastMouseX = ccMouseX;
@@ -76,6 +86,8 @@ cc_world_t world;
 
 lua_State *L;
 LUALIB_API int luaopen_yaml(lua_State *L);
+
+cc_vec3_t hit;
 
 int main()
 {
@@ -147,25 +159,33 @@ int main()
 			cc_mouse_move(center_x, center_y);			
 		}
 		
-		if (ccKeySpace)
+		if (ccMouseDown1)
 		{
-			cc_vec3_t s, e, hit;
-			cc_camera_unproject(world.camera, width / 2, height / 2, 0.0, &s);
-			cc_camera_unproject(world.camera, width / 2, height / 2, 1.0, &e);
+			cc_line_t line;
+			
+			cc_camera_unproject(world.camera, width / 2, height / 2, 0.0, &line.p0);
+			cc_camera_unproject(world.camera, width / 2, height / 2, 1.0, &line.p1);
+			
+			printf("START: { %f, %f, %f }\n", line.p0.x, line.p0.y, line.p0.z);
+			printf("END:   { %f, %f, %f }\n", line.p1.x, line.p1.y, line.p1.z);
 			
 			float t;
-			if (cc_octree_line_intersection(world.chunks[0]->tree, &s, &e, &t))
-			{
-				cc_line_point(&s, &e, t, &hit);
+			if (cc_octree_line_intersection(world.chunks[0]->tree, &line, &hit, &t))
 				printf("HIT: { %f, %f, %f }\n", hit.x, hit.y, hit.z);
-			}
 						
-			ccKeySpace = 0;
+			ccMouseDown1 = 0;
 		}
 		
 		cc_entity_move(world.camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));
 		cc_render_3d();
 		cc_world_render(&world, width, height);
+		glDisable(GL_DEPTH_TEST);
+		glPointSize(10);
+		glColor3f(1.0,0.0,0.0);
+		glBegin(GL_POINTS);
+		glVertex3fv(&hit);
+		glEnd();
+		glEnable(GL_DEPTH_TEST);
 		cc_render_2d(width, height);
 		cc_ui_render(L);
 		cc_context_flip();

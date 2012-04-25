@@ -30,6 +30,11 @@ typedef struct cc_box_t
 	cc_vec3_t min, max;
 } cc_box_t;
 
+typedef struct cc_line_t
+{
+	cc_vec3_t p0, p1;
+} cc_line_t;
+
 typedef struct cc_octree_t
 {
 	struct cc_octree_t *child[2][2][2];
@@ -39,7 +44,7 @@ typedef struct cc_octree_t
 
 void cc_octree_init(cc_octree_t *tree);
 void cc_octree_free(cc_octree_t *tree);
-int cc_octree_line_intersection( cc_octree_t *tree, float *l1, float *l2, float *hit);
+int cc_octree_line_intersection( cc_octree_t *tree, cc_line_t *line, cc_vec3_t *hit, float *t);
 
 #define PI 3.14159265
 #define D2R(v) ((v)*(PI/180.0f))
@@ -51,10 +56,10 @@ void cc_vec3_scale(float *out, float *vec, float factor);
 float cc_vec3_length(float *vec);
 float cc_vec3_distance(float *vec1, float *vec2);
 
-void cc_line_point(float *l1, float *l2, float t, float *p);
-int cc_line_intersection( float dst1, float dst2, float *p1, float *p2, float *hit);
-int cc_vec3_in_box( float *vec, cc_box_t *box, const int axis);
-int cc_box_line_intersection( cc_box_t *box, float *l1, float *l2, float *hit);
+void cc_line_point(cc_line_t *line, float t, cc_vec3_t *out);
+int cc_line_intersection(float dst1, float dst2, cc_line_t *line, cc_vec3_t *hit, float *t);
+int cc_vec3_in_box( cc_vec3_t *hit, cc_box_t *box, const int axis);
+int cc_box_line_intersection( cc_box_t *box, cc_line_t *line, cc_vec3_t *hit, float *t);
 
 float *cc_matrix_copy(float *dst, float *src);
 float *cc_matrix_multiply(float *out, float *a, float *b);
