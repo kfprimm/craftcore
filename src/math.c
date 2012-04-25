@@ -2,6 +2,138 @@
 #include <craftcore.h>
 #include <math.h>
 
+void cc_octree_print(cc_octree_t *tree, int depth)
+{
+	int leaf = TRUE;
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z] != NULL)
+					leaf = FALSE;
+	
+	printf("%*s", depth, " ");
+	if (leaf)
+		printf("LEAF\n");
+	else
+		printf("BRANCH\n");
+	
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z] != NULL)
+					cc_octree_print(tree->child[x][y][z], depth + 1);
+}
+
+void cc_octree_init(cc_octree_t *tree)
+{
+	memset(tree, 0, sizeof(cc_octree_t));
+}
+
+void cc_octree_free(cc_octree_t *tree)
+{
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				cc_octree_free(tree->child[x][y][z]);
+}
+
+int cc_octree_line_intersection( cc_octree_t *tree, float *l1, float *l2, float *hit)
+{
+	int leaf = TRUE;
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+				if (tree->child[x][y][z] != NULL)
+					leaf = FALSE;
+	
+	if (leaf)
+		return cc_box_line_intersection(&tree->bounds.min, &tree->bounds.max, l1, l2, hit);
+	
+	for (int z = 0;z < 2;z++)
+		for (int y = 0;y < 2;y++)
+			for (int x = 0;x < 2;x++)
+			{
+				
+			}
+}
+
+void cc_vec3_add(float *out, float *a, float *b)
+{
+	out[0] = a[0] + b[0];
+	out[1] = a[1] + b[1];
+	out[2] = a[2] + b[2];
+}
+
+void cc_vec3_sub(float *out, float *a, float *b)
+{
+	out[0] = a[0] - b[0];
+	out[1] = a[1] - b[1];
+	out[2] = a[2] - b[2];
+}
+
+void cc_vec3_scale(float *out, float *vec, float factor)
+{
+	out[0] = vec[0] * factor;
+	out[1] = vec[1] * factor;
+	out[2] = vec[2] * factor;
+}
+
+float cc_vec3_length(float *vec)
+{
+	return sqrt(vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]);
+}
+
+float cc_vec3_distance(float *vec1, float *vec2)
+{
+	float vec[3];
+	cc_vec3_sub(vec, vec2, vec1);
+	return cc_vec3_length(&vec);
+}
+
+int cc_line_intersection( float dst1, float dst2, float *p1, float *p2, float *hit)
+{
+	if ( (dst1 * dst2) >= 0.0f) return 0;
+	if ( dst1 == dst2) return 0; 
+	float diff[3];
+	cc_vec3_sub(diff, p2, p1);
+	cc_vec3_scale(diff, diff, -dst1/(dst2-dst1));
+	cc_vec3_add(hit, p1, diff);
+	return 1;
+}
+
+int cc_vec3_in_box( float *vec, float *min, float *max, const int axis)
+{
+	if ( axis==1 && vec[2] > min[2] && vec[2] < max[2] && vec[1] > min[1] && vec[1] < max[1]) return 1;
+	if ( axis==2 && vec[2] > min[2] && vec[2] < max[2] && vec[0] > min[0] && vec[0] < max[0]) return 1;
+	if ( axis==3 && vec[0] > min[0] && vec[0] < max[0] && vec[1] > min[1] && vec[1] < max[1]) return 1;
+	return 0;
+}
+
+int cc_box_line_intersection( float *min, float *max, float *l1, float *l2, float *hit)
+{
+	if (l2[0] < min[0] && l1[0] < min[0]) return 0;
+	if (l2[0] > max[0] && l1[0] > max[0]) return 0;
+	if (l2[1] < min[1] && l1[1] < min[1]) return 0;
+	if (l2[1] > max[1] && l1[1] > max[1]) return 0;
+	if (l2[2] < min[2] && l1[2] < min[2]) return 0;
+	if (l2[2] > max[2] && l1[2] > max[2]) return 0;
+	if (l1[0] > min[0] && l1[0] < max[0] && l1[1] > min[1] && l1[1] < max[1] && l1[2] > min[2] && l1[2] < max[2])
+	{
+		hit = l1;
+		return 1;
+	}
+	
+	if ( (cc_line_intersection( l1[0]-min[0], l2[0]-min[0], l1, l2, hit) && cc_vec3_in_box( hit, min, max, 1 ))
+		|| (cc_line_intersection( l1[1]-min[1], l2[1]-min[1], l1, l2, hit) && cc_vec3_in_box( hit, min, max, 2 )) 
+		|| (cc_line_intersection( l1[2]-min[2], l2[2]-min[2], l1, l2, hit) && cc_vec3_in_box( hit, min, max, 3 )) 
+		|| (cc_line_intersection( l1[0]-max[0], l2[0]-max[0], l1, l2, hit) && cc_vec3_in_box( hit, min, max, 1 )) 
+		|| (cc_line_intersection( l1[1]-max[1], l2[1]-max[1], l1, l2, hit) && cc_vec3_in_box( hit, min, max, 2 )) 
+		|| (cc_line_intersection( l1[2]-max[2], l2[2]-max[2], l1, l2, hit) && cc_vec3_in_box( hit, min, max, 3 )))
+		return 1;
+
+	return 0;
+}
+
 #define _(x, y) (x * 4 + y)
 
 float ccMatrixA[16], ccMatrixB[16], ccMatrixC[16];

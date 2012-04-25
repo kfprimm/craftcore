@@ -65,7 +65,7 @@ void cc_system_poll()
 	}
 }
 
-int cc_context_open(char *title, int width, int height)
+int cc_context_open(const char *title, int width, int height)
 {
 	dpy = XOpenDisplay(NULL);
 

@@ -8,6 +8,8 @@ typedef void *cc_block_t;
 typedef void *cc_chunk_t;
 typedef void *cc_world_t;
 
+void cc_context_size(int *width, int *height);
+
 double noise1(double arg);
 float noise2(float vec[2]);
 float noise3(float vec[3]);
@@ -29,7 +31,6 @@ void cc_block_set_name(cc_block_t *block, const char *name);
 void cc_block_set_texture(cc_block_t *block, int side, cc_texture_t *texture);
 void cc_block_set_color(cc_block_t *block, int side, float r, float g, float b);
 
-
 ]]
 
 noise1 = ffi.C.noise1
@@ -39,12 +40,25 @@ function noise2(vec)
 end
 
 cc = {}
+
+cc.contextSize = function()
+  local w, h = ffi.new("int[1]"), ffi.new("int[1]")
+  ffi.C.cc_context_size(w, h)
+  return w[0], h[0]
+end
+
 cc.loadAtlas       = ffi.C.cc_load_atlas
 cc.atlasTexture    = ffi.C.cc_atlas_texture
+
 cc.worldAddChunk   = ffi.C.cc_world_add_chunk
 cc.worldAddBlock   = ffi.C.cc_world_add_block
 cc.chunkSetBlock   = ffi.C.cc_chunk_set_block
+
 cc.newBlock        = ffi.C.cc_new_block
 cc.blockSetName    = ffi.C.cc_block_set_name
 cc.blockSetTexture = ffi.C.cc_block_set_texture
 cc.blockSetColor   = ffi.C.cc_block_set_color
+cc.drawTexture     = function(name, x, y)
+	ffi.C.cc_texture_draw(cm.textures[name], x, y)
+end
+cc.drawRect        = ffi.C.cc_draw_rect

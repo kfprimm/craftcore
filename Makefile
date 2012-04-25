@@ -8,7 +8,7 @@ ENET_LIBS  = `pkg-config --libs libenet`
 YAML_FLAGS = `pkg-config --cflags yaml-0.1`
 YAML_LIBS  = `pkg-config --libs yaml-0.1`
 
-C_FLAGS = -Wl,-E -Wall -std=c99 -Isrc $(LUA_FLAGS) $(ENET_FLAGS) $(YAML_FLAGS)
+C_FLAGS = -g -Wl,-E -Wall -std=c99 -Isrc $(LUA_FLAGS) $(ENET_FLAGS) $(YAML_FLAGS)
 LIBS    = -lX11 -lIL -lGLEW -lGL -lGLU $(LUA_LIBS) $(ENET_LIBS) $(YAML_LIBS)
 
 IMPORT_DIR = mods/standard/assets
