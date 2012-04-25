@@ -79,6 +79,7 @@ int main()
 {
 	cc_startup_event();
 	cc_startup_ui();
+	cc_startup_network();
 	cc_world_init(&world);
 	
 	L = lua_open();

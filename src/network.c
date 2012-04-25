@@ -4,22 +4,22 @@
 
 ENetHost *host;
 
-void ccNetworkUpdate()
+void cc_network_update()
 {
 	
 }
 
-void ccNetworkShutdown()
+void cc_shutdown_network()
 {
 	enet_deinitialize();
 }
 
-void ccNetworkStartup()
+void cc_startup_network()
 {
 	if (enet_initialize () != 0)
   {
       fprintf (stdout, "An error occurred while initializing ENet.\n");
       return EXIT_FAILURE;
   }
-  atexit(ccNetworkShutdown);
+  atexit(cc_shutdown_network);
 }
