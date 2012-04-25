@@ -54,10 +54,14 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	cc_matrix_inverse(matrix);
 	glLoadMatrixf(matrix);
 	
-	glPushMatrix();
+	glGetIntegerv(GL_VIEWPORT, camera->viewport);
+	glGetDoublev(GL_MODELVIEW_MATRIX, camera->wrld_matrix);
+	glGetDoublev(GL_PROJECTION_MATRIX, camera->proj_matrix);
+	
+	/*glPushMatrix();
 	cc_identity_matrix(matrix);
 	cc_matrix_translate(matrix, -CHUNKSIZE,0.0f,CHUNKSIZE);
-	glMultMatrixf(matrix);
+	glMultMatrixf(matrix);*/
 	
 	cc_atlas_set(world->blocks[0]->texture[0]->atlas);
 	

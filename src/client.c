@@ -7,7 +7,7 @@ float ccMove = 0.0f;
 int ccLastMouseX = 0, ccLastMouseY = 0;
 int ccMouseX = 0, ccMouseY = 0;
 
-int ccKeyW = 0, ccKeyS = 0, ccKeyA = 0, ccKeyD = 0;
+int ccKeyW = 0, ccKeyS = 0, ccKeyA = 0, ccKeyD = 0, ccKeySpace = 0;
 
 int ccLookAround = 0;
 
@@ -31,6 +31,7 @@ void HookFunc(cc_event_t *ev)
 		case KEY_A:ccKeyA = 0;break;
 		case KEY_S:ccKeyS = 0;break;
 		case KEY_D:ccKeyD = 0;break;
+		case KEY_SPACE:ccKeySpace = 0;break;
 		}
 		//printf("KEY UP: %i\n", ev->data);
 		break;
@@ -41,6 +42,7 @@ void HookFunc(cc_event_t *ev)
 		case KEY_A:ccKeyA = 1;break;
 		case KEY_S:ccKeyS = 1;break;
 		case KEY_D:ccKeyD = 1;break;
+		case KEY_SPACE:ccKeySpace = 1;break;		
 		}
 		break;
 	case EVENT_MOUSEDOWN:
@@ -117,7 +119,7 @@ int main()
 
 	cc_startup_render();
 
-	cc_entity_set_position(world.camera, 0,6,CHUNKSIZE*4);
+	//cc_entity_set_position(world.camera, 0,6,CHUNKSIZE*4);
 	
 	cc_hook_add(cc_event_hook, (CCHOOKFUNC)HookFunc);
 
@@ -143,6 +145,22 @@ int main()
 			
 			cc_entity_set_rotation(world.camera, pitch, yaw, roll);
 			cc_mouse_move(center_x, center_y);			
+		}
+		
+		if (ccKeySpace)
+		{
+			cc_vec3_t s, e, hit;
+			cc_camera_unproject(world.camera, width / 2, height / 2, 0.0, &s);
+			cc_camera_unproject(world.camera, width / 2, height / 2, 1.0, &e);
+			
+			float t;
+			if (cc_octree_line_intersection(world.chunks[0]->tree, &s, &e, &t))
+			{
+				cc_line_point(&s, &e, t, &hit);
+				printf("HIT: { %f, %f, %f }\n", hit.x, hit.y, hit.z);
+			}
+						
+			ccKeySpace = 0;
 		}
 		
 		cc_entity_move(world.camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));

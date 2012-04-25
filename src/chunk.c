@@ -150,7 +150,7 @@ cc_octree_t *cc_chunk_build_leaf(cc_chunk_t *chunk, int x0, int y0, int z0, int 
 	}
 	else
 	{
-		int build = TRUE;
+		int build = FALSE;
 
 		cc_octree_t *child[2][2][2];
 		for (int z = 0;z < 2;z++)
@@ -159,25 +159,28 @@ cc_octree_t *cc_chunk_build_leaf(cc_chunk_t *chunk, int x0, int y0, int z0, int 
 				{
 					const int STEPX = (x1-x0) / 2, STEPY = (y1-y0) / 2, STEPZ = (z1-z0) / 2;
 					child[x][y][z] = cc_chunk_build_leaf(chunk, x0 + x * STEPX, y0 + y * STEPY, z0 + z * STEPZ, x0 + (x + 1) * STEPX, y0 + (y + 1) * STEPY, z0 + (z + 1) * STEPZ);
-					if (child[x][y][z] == NULL)
-						build = FALSE;
+					if (child[x][y][z] != NULL)
+						build = TRUE;
 				}
 		
-		result = cc_new(octree);
-		cc_octree_init(result);
+		if (build)
+		{
+			result = cc_new(octree);
+			cc_octree_init(result);
 		
-		result->bounds.min.x = x0;
-		result->bounds.min.y = y0;
-		result->bounds.min.z = z0;
+			result->bounds.min.x = x0;
+			result->bounds.min.y = y0;
+			result->bounds.min.z = z0;
 		
-		result->bounds.max.x = x1;
-		result->bounds.max.y = y1;
-		result->bounds.max.z = z1;
+			result->bounds.max.x = x1;
+			result->bounds.max.y = y1;
+			result->bounds.max.z = z1;
 		
-		for (int z = 0;z < 2;z++)
-			for (int y = 0;y < 2;y++)
-				for (int x = 0;x < 2;x++)		
-					result->child[x][y][z] = child[x][y][z];
+			for (int z = 0;z < 2;z++)
+				for (int y = 0;y < 2;y++)
+					for (int x = 0;x < 2;x++)		
+						result->child[x][y][z] = child[x][y][z];
+		}
 	}
 	return result;
 }

@@ -2,6 +2,8 @@
 #include <craftcore.h>
 #include <string.h>
 
+char *strdup(const char *str);
+
 cc_block_t *cc_new_block()
 {
 	cc_block_t *block = cc_new(block);

@@ -14,11 +14,11 @@
 #define NP 12   /* 2^N */
 #define NM 0xfff
 
-static p[B + B + 2];
+static int p[B + B + 2];
 static float g3[B + B + 2][3];
 static float g2[B + B + 2][2];
 static float g1[B + B + 2];
-static start = 1;
+static int start = 1;
 
 static void init(void);
 
@@ -58,7 +58,7 @@ float noise2(float vec[2])
 {
 	int bx0, bx1, by0, by1, b00, b10, b01, b11;
 	float rx0, rx1, ry0, ry1, *q, sx, sy, a, b, t, u, v;
-	register i, j;
+	register int i, j;
 
 	if (start) {
 		start = 0;
@@ -96,7 +96,7 @@ float noise3(float vec[3])
 {
 	int bx0, bx1, by0, by1, bz0, bz1, b00, b10, b01, b11;
 	float rx0, rx1, ry0, ry1, rz0, rz1, *q, sy, sz, a, b, c, d, t, u, v;
-	register i, j;
+	register int i, j;
 
 	if (start) {
 		start = 0;
