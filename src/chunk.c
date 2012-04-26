@@ -147,6 +147,7 @@ cc_octree_t *cc_chunk_build_leaf(cc_chunk_t *chunk, int x0, int y0, int z0, int 
 		result->bounds.max.x = x1 * 2;
 		result->bounds.max.y = y1 * 2;
 		result->bounds.max.z = z1 * 2;
+		result->data = (void*)CHUNKBLOCKINDEX(x0, y0, z0);
 	}
 	else
 	{

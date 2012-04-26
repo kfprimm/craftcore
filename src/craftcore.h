@@ -44,7 +44,7 @@ typedef struct cc_octree_t
 
 void cc_octree_init(cc_octree_t *tree);
 void cc_octree_free(cc_octree_t *tree);
-int cc_octree_line_intersection( cc_octree_t *tree, cc_line_t *line, cc_vec3_t *hit, float *t);
+int cc_octree_line_intersection( cc_octree_t *tree, cc_line_t *line, float *t, void **data);
 
 #define PI 3.14159265
 #define D2R(v) ((v)*(PI/180.0f))
@@ -57,9 +57,7 @@ float cc_vec3_length(float *vec);
 float cc_vec3_distance(float *vec1, float *vec2);
 
 void cc_line_point(cc_line_t *line, float t, cc_vec3_t *out);
-int cc_line_intersection(float dst1, float dst2, cc_line_t *line, cc_vec3_t *hit, float *t);
-int cc_vec3_in_box( cc_vec3_t *hit, cc_box_t *box, const int axis);
-int cc_box_line_intersection( cc_box_t *box, cc_line_t *line, cc_vec3_t *hit, float *t);
+int cc_box_line_intersection( cc_box_t *box, cc_line_t *line, float *t);
 
 float *cc_matrix_copy(float *dst, float *src);
 float *cc_matrix_multiply(float *out, float *a, float *b);
@@ -208,6 +206,7 @@ void cc_block_set_color(cc_block_t *block, int side, float r, float g, float b);
 #define CHUNKVERTEXCOUNT ((CHUNKSIZE + 1)*(CHUNKSIZE + 1)*(CHUNKSIZE + 1))
 #define CHUNKDATASIZE    (sizeof(float)*CHUNKVERTEXCOUNT*3)
 #define CHUNKVERTEXINDEX(x, y, z) ((z) * (CHUNKSIZE + 1) * (CHUNKSIZE + 1) + (y) * (CHUNKSIZE + 1) + (x))
+#define CHUNKBLOCKINDEX(x, y, z) ((z) * CHUNKSIZE*CHUNKSIZE + (y) * CHUNKSIZE + (x))
 
 #define CHUNK_BACK    0
 #define CHUNK_FRONT   1

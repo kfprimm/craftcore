@@ -87,8 +87,6 @@ cc_world_t world;
 lua_State *L;
 LUALIB_API int luaopen_yaml(lua_State *L);
 
-cc_vec3_t hit;
-
 int main()
 {
 	cc_startup_event();
@@ -137,7 +135,14 @@ int main()
 
 	cc_world_build_chunk(&world, world.chunks[0]);
 	cc_chunk_build_tree(world.chunks[0]);
+
+	cc_world_build_chunk(&world, world.chunks[0]);
+	cc_chunk_build_tree(world.chunks[0]);
 	
+	cc_vec3_t hit;
+	cc_line_t line;
+	int index;
+		
 	while (ccContinue)
 	{
 		cc_system_poll();
@@ -161,31 +166,46 @@ int main()
 		
 		if (ccMouseDown1)
 		{
-			cc_line_t line;
-			
 			cc_camera_unproject(world.camera, width / 2, height / 2, 0.0, &line.p0);
 			cc_camera_unproject(world.camera, width / 2, height / 2, 1.0, &line.p1);
 			
-			printf("START: { %f, %f, %f }\n", line.p0.x, line.p0.y, line.p0.z);
-			printf("END:   { %f, %f, %f }\n", line.p1.x, line.p1.y, line.p1.z);
-			
 			float t;
-			if (cc_octree_line_intersection(world.chunks[0]->tree, &line, &hit, &t))
-				printf("HIT: { %f, %f, %f }\n", hit.x, hit.y, hit.z);
-						
+			if (cc_octree_line_intersection(world.chunks[0]->tree, &line, &t, (void**)&index))
+			{
+				int x, y, z;
+				z = index / (CHUNKSIZE*CHUNKSIZE);
+				y = (index - (z*CHUNKSIZE*CHUNKSIZE)) / CHUNKSIZE;
+				x = (index - (z*CHUNKSIZE*CHUNKSIZE)) - (y*CHUNKSIZE);
+				
+				world.chunks[0]->block[x][y][z] = 0;
+				
+				cc_world_build_chunk(&world, world.chunks[0]);
+				cc_chunk_build_tree(world.chunks[0]);
+				
+				cc_line_point(&line, t, &hit);
+				printf("HIT: { %f, %f, %f } index = %i (%i, %i, %i)\n", hit.x, hit.y, hit.z, index, x, y, z);
+			}		
 			ccMouseDown1 = 0;
 		}
 		
 		cc_entity_move(world.camera, (ccKeyD-ccKeyA), 0, (ccKeyS-ccKeyW));
 		cc_render_3d();
 		cc_world_render(&world, width, height);
-		glDisable(GL_DEPTH_TEST);
+		
+		/*glDisable(GL_DEPTH_TEST);
 		glPointSize(10);
 		glColor3f(1.0,0.0,0.0);
 		glBegin(GL_POINTS);
 		glVertex3fv(&hit);
 		glEnd();
-		glEnable(GL_DEPTH_TEST);
+		glLineWidth(1.0f);
+		glColor3f(0.0,1.0,0.0);
+		glBegin(GL_LINES);
+		glVertex3fv(&line.p0);
+		glVertex3fv(&line.p1);
+		glEnd();
+		glEnable(GL_DEPTH_TEST);*/
+		
 		cc_render_2d(width, height);
 		cc_ui_render(L);
 		cc_context_flip();

@@ -119,13 +119,13 @@ void cc_world_render(cc_world_t *world, int width, int height)
 	
 	cc_chunk_render(world->chunks[0]);
 	
-	glDisable(GL_CULL_FACE);
+	/*glDisable(GL_CULL_FACE);
 	glDisable(GL_TEXTURE_2D);
 	glColor3f(1.0, 1.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	cc_octree_render(world->chunks[0]->tree);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);*/
 	
 	glPopMatrix();
 
